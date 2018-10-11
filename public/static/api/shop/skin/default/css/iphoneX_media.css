@@ -1,0 +1,8 @@
+﻿@media only screen and (width: 375px) and (height: 690px){
+    /*增加底部适配层*/
+    #footer {
+        height: 50px;
+        /*padding-bottom: 34px;*/
+
+    }
+}
