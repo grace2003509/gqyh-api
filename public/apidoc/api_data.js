@@ -55,13 +55,13 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "curl -i http://localhost:6001/test/4711",
+        "content": "curl -i http://localhost:6002/api/test/4711",
         "type": "curl"
       }
     ],
     "sampleRequest": [
       {
-        "url": "/test/:id"
+        "url": "/api/test/:id"
       }
     ],
     "error": {
@@ -74,7 +74,7 @@ define({ "api": [
       ]
     },
     "version": "0.0.0",
-    "filename": "app/Http/Controllers/TestController.php",
+    "filename": "app/Http/Controllers/Api/TestController.php",
     "groupTitle": "test"
   }
 ] });

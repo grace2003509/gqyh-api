@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class TestController extends Controller
@@ -20,9 +21,9 @@ class TestController extends Controller
      * @apiSuccess {String} firstname Firstname of the Admin.
      *
      * @apiExample {curl} Example usage:
-     *     curl -i http://localhost:6001/test/4711
+     *     curl -i http://localhost:6002/api/test/4711
      *
-     * @apiSampleRequest /test/:id
+     * @apiSampleRequest /api/test/:id
      *
      * @apiErrorExample {json} Error-Response:
      *     HTTP/1.1 404 Not Found
