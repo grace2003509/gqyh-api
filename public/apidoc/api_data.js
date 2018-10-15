@@ -482,7 +482,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"登陆成功\",\n     \"token\": \"SHEHES256SE1AEGHSEDHNS5685\",\n     \"url\": \"\",\n}",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"登陆成功\",\n     \"data\": {\n         \"token\": \"586dfb3fbb3d145e1707b21b6c2dbe35.MTU3MTEyNDc4Mg==.7908ef5dfffc38017a3260941272bcf5\",\n         \"expire_time\": \"2019-10-15 15:33:02\"\n     },\n     \"url\": \"\",\n}",
           "type": "json"
         }
       ]
@@ -582,7 +582,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"注册成功\"\n}",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"注册成功\",\n     \"data\": {\n         \"token\": \"586dfb3fbb3d145e1707b21b6c2dbe35.MTU3MTEyNDc4Mg==.7908ef5dfffc38017a3260941272bcf5\",\n         \"expire_time\": \"2019-10-15 15:33:02\"\n     },\n}",
           "type": "json"
         }
       ]

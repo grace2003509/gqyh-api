@@ -46,7 +46,10 @@ class AuthController extends Controller
      *     {
      *          "status": "1",
      *          "msg": "登陆成功",
-     *          "token": "SHEHES256SE1AEGHSEDHNS5685",
+     *          "data": {
+     *              "token": "586dfb3fbb3d145e1707b21b6c2dbe35.MTU3MTEyNDc4Mg==.7908ef5dfffc38017a3260941272bcf5",
+     *              "expire_time": "2019-10-15 15:33:02"
+     *          },
      *          "url": "",
      *     }
      */
@@ -80,7 +83,8 @@ class AuthController extends Controller
         }
 
         $user = $m_obj->where('User_Mobile', $input['mobile'])->first();
-        $token = md5(time().$input['mobile']);
+        $remark_token = md5(time().$input['mobile']);
+        $token_data = $this->create_token($remark_token);
         if(isset($input['history_url'])){
             $url = $input['history_url'];
         }else{
@@ -100,11 +104,11 @@ class AuthController extends Controller
             }
 
             if($user['User_Status'] == 1){
-                $user->remark_token = $token;
+                $user->remark_token = $remark_token;
                 $flag = $user->save();
 
                 if($flag){
-                    $data = ['status' => 1, 'msg' => '登陆成功', 'token' => $token, 'url' => $url];
+                    $data = ['status' => 1, 'msg' => '登陆成功', 'data' => $token_data, 'url' => $url];
                 }else{
                     $data = ['status' => 0, 'msg' => '登陆失败'];
                 }
@@ -131,11 +135,11 @@ class AuthController extends Controller
             }
 
             if($user && $user['User_Status'] == 1){
-                $user->remark_token = $token;
+                $user->remark_token = $remark_token;
                 $flag = $user->save();
 
                 if($flag){
-                    $data = ['status' => 1, 'msg' => '登陆成功', 'token' => $token, 'url' => $url];
+                    $data = ['status' => 1, 'msg' => '登陆成功', 'data' => $token_data, 'url' => $url];
                 }else{
                     $data = ['status' => 0, 'msg' => '登陆失败'];
                 }
@@ -178,7 +182,11 @@ class AuthController extends Controller
      * @apiSuccessExample {json} Success-Response:
      *     {
      *          "status": "1",
-     *          "msg": "注册成功"
+     *          "msg": "注册成功",
+     *          "data": {
+     *              "token": "586dfb3fbb3d145e1707b21b6c2dbe35.MTU3MTEyNDc4Mg==.7908ef5dfffc38017a3260941272bcf5",
+     *              "expire_time": "2019-10-15 15:33:02"
+     *          },
      *     }
      */
     public function register(Request $request)
@@ -217,17 +225,18 @@ class AuthController extends Controller
             return json_encode($rst);
         }
 
-        $token = md5(time().$input['mobile']);
+        $remark_token = md5(time().$input['mobile']);
+        $token_data = $this->create_token($remark_token);
 
         $user = $this->create_user($input);
         if($user){
             //新用户登陆
             $user_info = $m_obj->find($user['User_ID']);
-            $user_info->remark_token = $token;
+            $user_info->remark_token = $remark_token;
             $flag = $user_info->save();
 
             if($flag){
-                $data = ['status' => 1, 'msg' => '注册成功', 'token' => $token];
+                $data = ['status' => 1, 'msg' => '注册成功', 'data' => $token_data];
             }else{
                 $data = ['status' => 0, 'msg' => '登陆失败'];
             }
@@ -427,6 +436,7 @@ class AuthController extends Controller
     }
 
 
+    //创建新用户
     private function create_user($input)
     {
         $dc_obj = new Dis_Config();
@@ -515,4 +525,21 @@ class AuthController extends Controller
 
         return $user;
     }
+
+
+    //生成token
+    private function create_token($remark_token)
+    {
+        $expire_time = time()+60*60*24*365;
+        $token = $remark_token.'.'.base64_encode($expire_time).'.'.md5(USERSID);
+
+        $data = [
+            'token' => $token,
+            'expire_time' => date('Y-m-d H:i:s', $expire_time),
+        ];
+
+        return $data;
+    }
+
+
 }
