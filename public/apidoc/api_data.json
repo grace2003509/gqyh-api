@@ -13,8 +13,8 @@
             "group": "Header",
             "type": "String",
             "optional": true,
-            "field": "access-key",
-            "description": "<p>Users unique access-key.</p>"
+            "field": "access_token",
+            "description": "<p>Users unique access_token.</p>"
           }
         ]
       }
@@ -76,6 +76,98 @@
     "version": "0.0.0",
     "filename": "app/Http/Controllers/Api/TestController.php",
     "groupTitle": "test"
+  },
+  {
+    "type": "get",
+    "url": "/center/user_info",
+    "title": "用户信息",
+    "group": "用户中心",
+    "description": "<p>获取用户信息</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>用户信息数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": {\n             \"User_ID\": 17,  //用户ID\n             \"User_No\": 600017,  //用户编号\n             \"User_Mobile\": \"13274507043\",  //用户手机号\n             \"User_NickName\": null,  //用户昵称\n             \"User_Level\": 0,  //用户等级\n             \"User_HeadImg\": \"http://localhost:6001//uploadfiles/9nj50igwex/image/5b87a19025.png\",  //用户头像\n             \"Is_Distribute\": 0,  //是否是分销商（0:普通账户，1:分销账户）\n             \"User_CreateTime\": \"2018-10-15 10:53:54\",  //注册时间\n         },\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/center/user_info",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/center/user_info"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/Center/UserInfoController.php",
+    "groupTitle": "用户中心",
+    "name": "GetCenterUser_info"
   },
   {
     "type": "get",
@@ -155,6 +247,78 @@
     "filename": "app/Http/Controllers/Api/AuthController.php",
     "groupTitle": "用户认证",
     "name": "GetCheck_sms"
+  },
+  {
+    "type": "get",
+    "url": "/logout",
+    "title": "退出登陆",
+    "group": "用户认证",
+    "description": "<p>退出登陆</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>1:成功，0:失败</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>状态说明</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"退出登陆成功\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/logout",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/logout"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"退出登陆失败\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/AuthController.php",
+    "groupTitle": "用户认证",
+    "name": "GetLogout"
   },
   {
     "type": "get",

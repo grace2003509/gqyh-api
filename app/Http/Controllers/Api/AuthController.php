@@ -240,6 +240,63 @@ class AuthController extends Controller
     }
 
 
+
+    /**
+     * @api {get} /logout 退出登陆
+     * @apiGroup 用户认证
+     * @apiDescription 退出登陆
+     *
+     * @apiParam {Number} UserID         用户ID
+     *
+     * @apiSuccess {Number} status       1:成功，0:失败
+     * @apiSuccess {String} msg          状态说明
+     *
+     * @apiExample {curl} Example usage:
+     *     curl -i http://localhost:6002/api/logout
+     *
+     * @apiSampleRequest /api/logout
+     *
+     * @apiErrorExample {json} Error-Response:
+     *     {
+     *          "status": "0",
+     *          "msg": "退出登陆失败"
+     *     }
+     * @apiSuccessExample {json} Success-Response:
+     *     {
+     *          "status": "1",
+     *          "msg": "退出登陆成功"
+     *     }
+     */
+    public function logout(Request $request)
+    {
+        $input = $request->input();
+
+        $rules = [
+            'UserID' => 'required|exists:user,User_ID'
+        ];
+        $message = [
+            'UserID.required' => '缺少必要的参数UserID',
+            'UserID.exists' => '此用户不存在',
+        ];
+        $validator = Validator::make($input, $rules, $message);
+        if($validator->fails()){
+            $data = ['status' => 0, 'msg' => $validator->messages()->first()];
+            return json_encode($data);
+        }
+
+        $m_obj = new Member();
+        $flag = $m_obj->where('User_ID', $input['UserID'])->update(['remark_token' => '']);
+
+        if($flag){
+            $data = ['status' => 1, 'msg' => '退出登陆成功'];
+        }else{
+            $data = ['status' => 0, 'msg' => '退出登陆失败'];
+        }
+        return json_encode($data);
+
+    }
+
+
     /**
      * @api {get} /send_sms  发送验证码
      * @apiGroup 用户认证

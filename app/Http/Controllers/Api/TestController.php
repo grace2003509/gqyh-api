@@ -14,7 +14,7 @@ class TestController extends Controller
      * @apiGroup test
      * @apiDescription 测试接口
      *
-     * @apiHeader {String} [access-key] Users unique access-key.
+     * @apiHeader {String} [access_token] Users unique access_token.
      *
      * @apiParam {Number} id 用户ID
      *

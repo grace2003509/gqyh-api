@@ -19,10 +19,17 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function ($route){
     //登陆
     $route->post('/login', 'AuthController@login');
     $route->post('/register', 'AuthController@register');
+    $route->get('/logout', 'AuthController@logout');
     //发送短信验证码
     $route->get('/send_sms', 'AuthController@sendSMS');
     //验证短信验证码
     $route->get('/check_sms', 'AuthController@checkSMS');
+
+    //个人中心
+    $route->group(['prefix' => 'center', 'namespace' => 'Center',  'middleware' => ['check_auth']], function ($api) {
+        //用户信息
+        $api->get('/user_info', 'UserInfoController@user_info');
+    });
 
 });
 

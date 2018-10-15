@@ -19,6 +19,7 @@
 |
 */
 define('USERSID', '9nj50igwex');
+define('ADMIN_BASE_HOST', 'http://localhost:6001');
 
 
 require __DIR__.'/../bootstrap/autoload.php';
