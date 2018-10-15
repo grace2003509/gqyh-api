@@ -12,4 +12,6 @@ class User_Message_Record extends Model
 
     protected $fillable = [ 'Users_ID', 'User_ID', 'Message_ID', 'Record_CreateTime'];
 
+    protected $hidden = ['Users_ID'];
+
 }

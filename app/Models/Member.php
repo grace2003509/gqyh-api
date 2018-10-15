@@ -20,7 +20,7 @@ class Member extends Model {
         'User_Json_Select','User_HeadImg','User_Profile','User_Money','User_PayPassword','Is_Distribute','Owner_Id',
         'Root_ID','User_ExpireTime','Peas_num','unionid','uuid','App_WxOpenID','apploginTime','User_UnionID','remark_token'];
 
-	protected $hidden = ['User_Password', 'User_PayPassword', 'remark_token'];
+	protected $hidden = ['Users_ID', 'User_Password', 'User_PayPassword', 'remark_token'];
 
 	//一个用户对应一个分销账号
 	public function disAccount()

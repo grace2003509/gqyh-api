@@ -30,6 +30,7 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function ($route){
         //系统消息
         $api->get('/sys_message_num', 'UserInfoController@sys_message_num');
         $api->get('/sys_message_list', 'UserInfoController@sys_message_list');
+        $api->get('/sys_message_read', 'UserInfoController@sys_message_read');
     });
 
 });
