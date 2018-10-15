@@ -20,7 +20,7 @@ class UserInfoController extends Controller
      *
      * @apiParam {Number}   UserID      用户ID
      *
-     * @apiSuccess {Number} status      状态码（0:失败，1:成功）
+     * @apiSuccess {Number} status      状态码（0:失败，1:成功, -1:需要重新登陆）
      * @apiSuccess {String} msg         返回状态说明信息
      * @apiSuccess {Object} data        用户信息数据
      *

@@ -28,7 +28,7 @@ class AuthController extends Controller
      *
      * @apiSuccess {Number} status      状态码（0:失败，1:成功）
      * @apiSuccess {String} msg         返回状态说明信息
-     * @apiSuccess {String} token       TOKEN
+     * @apiSuccess {String} token       用户认证TOKEN
      * @apiSuccess {String} url         原浏览页路径
      *
      * @apiExample {curl} Example usage:

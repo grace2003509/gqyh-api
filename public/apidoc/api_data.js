@@ -117,7 +117,7 @@ define({ "api": [
             "type": "Number",
             "optional": false,
             "field": "status",
-            "description": "<p>状态码（0:失败，1:成功）</p>"
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
           },
           {
             "group": "Success 200",
@@ -468,7 +468,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "token",
-            "description": "<p>TOKEN</p>"
+            "description": "<p>用户认证TOKEN</p>"
           },
           {
             "group": "Success 200",
