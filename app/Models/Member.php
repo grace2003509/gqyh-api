@@ -12,7 +12,13 @@ class Member extends Model {
 	protected $primaryKey = "User_ID";
 	protected $table = "user";
 	public $timestamps = false;
-	protected $fillable = array('Is_Distribute');
+
+	protected $fillable = ['Users_ID','User_OpenID','User_No','User_Mobile','User_Name','User_Password','User_Gender',
+        'User_Age','User_NickName','User_IDNum','User_Telephone','User_Fax','User_Birthday','User_QQ','User_Email',
+        'User_Company','User_Level','User_Integral','User_UseLessIntegral','User_TotalIntegral','User_Cost','User_Province',
+        'User_City','User_Area','User_Address','User_CreateTime','User_From','User_Status','User_Remarks','User_Json_Input',
+        'User_Json_Select','User_HeadImg','User_Profile','User_Money','User_PayPassword','Is_Distribute','Owner_Id',
+        'Root_ID','User_ExpireTime','Peas_num','unionid','uuid','App_WxOpenID','apploginTime','User_UnionID','remark_token'];
 
 	//一个用户对应一个分销账号
 	public function disAccount()

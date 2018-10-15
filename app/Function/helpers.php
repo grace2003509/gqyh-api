@@ -252,7 +252,7 @@ if ( ! function_exists('build_record_sn'))
 
 }
 
-if( ! function_exists('virtual_randchar'))
+if( ! function_exists('virtual_randcode'))
 {
     /**
      * 得到一个虚拟订单的消费券码
@@ -265,6 +265,27 @@ if( ! function_exists('virtual_randchar'))
         for($i = 0; $i < $length; $i++){
             $temchars .= $chars[ mt_rand(0, strlen($chars) - 1) ];
         }
+        return $temchars;
+    }
+}
+
+
+if( ! function_exists('invite_randcode'))
+{
+    /**
+     * 得到一个分销商邀请码
+     * @param int $length
+     * @return string
+     */
+    function invite_randcode($length = 5, $userno) {
+        $chars = '0123456789';
+        $chars .= 'abcdefghijklmnopqrstuvwxyz';
+        $chars .= 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $temchars = '';
+        for($i = 0; $i < $length; $i++){
+            $temchars .= $chars[ mt_rand(0, strlen($chars) - 1) ];
+        }
+        $temchars .= $userno;
         return $temchars;
     }
 }

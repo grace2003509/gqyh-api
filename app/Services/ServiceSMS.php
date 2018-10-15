@@ -8,6 +8,7 @@
 
 namespace App\Services;
 
+use App\Models\Sms;
 use Carbon\Carbon;
 
 class ServiceSMS
@@ -168,10 +169,9 @@ class ServiceSMS
         return $res;
     }
 
-    public function send_sms($mobile, $message) {
-        global $DB1;
+    public function send_sms($mobile, $message)
+    {
         $flag = 1;
-
         if($flag==1){
             $mes = $message;
             $message = $this->strip_sms($message);
@@ -208,7 +208,8 @@ class ServiceSMS
                 "code"=>$code,
                 "usersid"=>USERSID
             );
-            $DB1->Add("sms",$Data);
+            $s_obj = new Sms();
+            $s_obj->create($Data);
 
             return $recode;
         }else{

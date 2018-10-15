@@ -15,6 +15,15 @@
 Route::group(['prefix' => 'api', 'namespace' => 'Api'], function ($route){
     //测试
     $route->get('/test/{id}', 'TestController@test');
+
+    //登陆
+    $route->post('/login', 'AuthController@login');
+    $route->post('/register', 'AuthController@register');
+    //发送短信验证码
+    $route->get('/send_sms', 'AuthController@sendSMS');
+    //验证短信验证码
+    $route->get('/check_sms', 'AuthController@checkSMS');
+
 });
 
 
