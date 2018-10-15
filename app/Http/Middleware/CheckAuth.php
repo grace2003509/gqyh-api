@@ -29,13 +29,17 @@ class CheckAuth
         } else {
             $token_arr = explode('.', $request->header('access-key'));
             $expire_time = base64_decode($token_arr[1]);
-            $user_info = $m_obj->where('remark_token', $token_arr[0])->first();
-
-            if (!$user_info || $user_info['remark_token'] == '') {
+            if (time() > $expire_time) {
                 return response(['status' => -1, 'msg' => '请重新登陆']);
             }
 
-            if (time() > $expire_time) {
+            $user_info = $m_obj->select('User_ID', 'remark_token')
+                ->where('User_ID', intval($request->UserID))
+                ->first();
+            if (!$user_info) {
+                return response(['status' => 0, 'msg' => '此用户不存在']);
+            }
+            if ($user_info['remark_token'] == '') {
                 return response(['status' => -1, 'msg' => '请重新登陆']);
             }
         }

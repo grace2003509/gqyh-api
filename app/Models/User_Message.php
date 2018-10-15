@@ -14,4 +14,6 @@ class User_Message extends Model
         'Users_ID', 'Message_Title', 'Message_StartTime', 'Message_EndTime', 'Message_Description',
         'Message_CreateTime', 'User_ID'
     ];
+
+    protected $hidden = ['Users_ID', 'Message_StartTime', 'Message_EndTime'];
 }

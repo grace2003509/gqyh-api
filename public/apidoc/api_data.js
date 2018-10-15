@@ -79,6 +79,198 @@ define({ "api": [
   },
   {
     "type": "get",
+    "url": "/center/sys_message_list",
+    "title": "系统消息列表",
+    "group": "用户中心",
+    "description": "<p>系统消息列表</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": true,
+            "field": "cur_page",
+            "defaultValue": "1",
+            "description": "<p>当前第几页</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>系统消息数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"获取系统消息列表成功\",\n     \"data\": {\n         \"current_page\": 1,  //当前页\n         \"data\": [\n             {\n                 \"Message_ID\": 1,   //消息ID\n                 \"Message_Title\": \"欢迎关注观前一号商城\",  //消息标题\n                 \"Message_Description\": \"欢迎关注观前一号商城\",   //消息内容\n                 \"Message_CreateTime\": \"2018-07-17 14:41:40\",   //消息发布时间\n                 \"User_ID\": 0,   //用户ID,为0时表示此消息是群发消息\n                 \"is_read\": 0   //消息是否已读（0:未读，1:已读）\n              }\n         ],\n         \"from\": 1,\n         \"last_page\": 1,  //上一页\n         \"next_page_url\": null,  //下一页\n         \"path\": \"http://localhost:6002/api/center/sys_message_list\",\n         \"per_page\": 15,   //每页数量\n         \"prev_page_url\": null,\n         \"to\": 1,\n         \"total\": 1   //消息总数\n      },\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/center/sys_message_list",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/center/sys_message_list"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/Center/UserInfoController.php",
+    "groupTitle": "用户中心",
+    "name": "GetCenterSys_message_list"
+  },
+  {
+    "type": "get",
+    "url": "/center/sys_message_num",
+    "title": "系统消息数量",
+    "group": "用户中心",
+    "description": "<p>系统消息总数量和未读数量</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>系统消息数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"获取系统消息数量成功\",\n     \"data\": {\n             \"total\": 17,  //用户的系统消息总数\n             \"read\": 15,  //用户已读消息数\n             \"unread\": 2,  //用户未读消息数\n         },\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/center/sys_message_num",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/center/sys_message_num"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/Center/UserInfoController.php",
+    "groupTitle": "用户中心",
+    "name": "GetCenterSys_message_num"
+  },
+  {
+    "type": "get",
     "url": "/center/user_info",
     "title": "用户信息",
     "group": "用户中心",

@@ -27,6 +27,9 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function ($route){
     $route->group(['prefix' => 'center', 'namespace' => 'Center',  'middleware' => ['check_auth']], function ($api) {
         //用户信息
         $api->get('/user_info', 'UserInfoController@user_info');
+        //系统消息
+        $api->get('/sys_message_num', 'UserInfoController@sys_message_num');
+        $api->get('/sys_message_list', 'UserInfoController@sys_message_list');
     });
 
 });
