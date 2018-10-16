@@ -28,9 +28,12 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function ($route){
         //用户信息
         $api->get('/user_info', 'UserInfoController@user_info');
         //系统消息
-        $api->get('/sys_message_num', 'UserInfoController@sys_message_num');
-        $api->get('/sys_message_list', 'UserInfoController@sys_message_list');
-        $api->get('/sys_message_read', 'UserInfoController@sys_message_read');
+        $api->get('/sys_message_num', 'MessageController@sys_message_num');
+        $api->get('/sys_message_list', 'MessageController@sys_message_list');
+        $api->get('/sys_message_read', 'MessageController@sys_message_read');
+        //订单列表、详情
+        $api->get('/order_list', 'OrderController@index');
+        $api->get('/order_detail', 'OrderController@show');
     });
 
 });

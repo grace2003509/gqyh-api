@@ -26,6 +26,8 @@ class UserOrder extends Model
         'cash_str','Web_Pricejs_new','store_mention','store_mention_time'
     ];
 
+    protected $hidden = ['Users_ID'];
+
 
     /*一个订单属于一个用户*/
     public function User()
