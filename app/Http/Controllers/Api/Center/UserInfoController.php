@@ -95,4 +95,54 @@ class UserInfoController extends Controller
         return json_encode($data);
     }
 
+
+
+    /**
+     * @api {post} /center/upload_headimg  上传用户头像
+     * @apiGroup 用户中心
+     * @apiDescription 上传用户头像
+     *
+     * @apiHeader {String} access-key   用户登陆认证token
+     *
+     * @apiParam {Number}   UserID      用户ID
+     * @apiParam {Number}   img_url     用户头像路径
+     *
+     * @apiSuccess {Number} status      状态码（0:失败，1:成功, -1:需要重新登陆）
+     * @apiSuccess {String} msg         返回状态说明信息
+     *
+     * @apiExample {curl} Example usage:
+     *     curl -i http://localhost:6002/api/center/upload_headimg
+     *
+     * @apiSampleRequest /api/center/upload_headimg
+     *
+     * @apiErrorExample {json} Error-Response:
+     *     {
+     *          "status": "0",
+     *          "msg": "失败",
+     *     }
+     * @apiSuccessExample {json} Success-Response:
+     *     {
+     *          "status": "1",
+     *          "msg": "头像上传成功",
+     *     }
+     */
+    public function upload_headimg(Request $request)
+    {
+        $input = $request->input();
+
+        $rules = [
+            'UserID' => 'required|exists:user,User_ID'
+        ];
+        $message = [
+            'UserID.required' => '缺少必要的参数UserID',
+            'UserID.exists' => '此用户不存在',
+        ];
+        $validator = Validator::make($input, $rules, $message);
+        if($validator->fails()){
+            $data = ['status' => 0, 'msg' => $validator->messages()->first()];
+            return json_encode($data);
+        }
+        //todo
+    }
+
 }

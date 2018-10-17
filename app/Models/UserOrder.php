@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\OrderConfirmEvent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -81,7 +82,8 @@ class UserOrder extends Model
     public function confirmReceive($orderid)
     {
         $flag_a = $this->where('Order_ID', $orderid)->update(['Order_Status' => 4]);
-        $this->fireModelEvent('confirmed', false);
+        $order = $this->find($orderid);
+        event(new OrderConfirmEvent($order));
 
         return $flag_a;
     }
@@ -310,6 +312,32 @@ class UserOrder extends Model
 
         return $total_sales;
 
+    }
+
+
+
+    /**
+     *判断此订单是否为分销订单
+     */
+    public function is_distribute_order($OrderID)
+    {
+        $order = $this->select('Order_CartList')->find($OrderID);
+
+        $Flag = false;
+
+        $CartList = json_decode(htmlspecialchars_decode($order['Order_CartList']), TRUE);
+        if (count($CartList) > 0) {
+            foreach ($CartList as $ProductID => $product_list) {
+                foreach ($product_list as $key => $item) {
+                    if ($item['OwnerID'] > 0) {
+                        $Flag = true;
+                        break 2;
+                    }
+                }
+            }
+        }
+
+        return $Flag;
     }
 
 }

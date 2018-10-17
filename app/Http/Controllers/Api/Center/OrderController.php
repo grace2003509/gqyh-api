@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Api\Center;
 
 use App\Models\Area;
+use App\Models\Dis_Account_Record;
 use App\Models\Dis_Level;
+use App\Models\Dis_Record;
 use App\Models\ShopConfig;
+use App\Models\User_Back_Order;
+use App\Models\User_Order_Commit;
 use App\Models\UserOrder;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -14,13 +18,13 @@ class OrderController extends Controller
 {
     /**
      * @api {get} /center/order_list  订单列表
-     * @apiGroup 用户中心
+     * @apiGroup 订单中心
      * @apiDescription 订单列表
      *
      * @apiHeader {String} access-key   用户登陆认证token
      *
      * @apiParam {Number}   UserID          用户ID
-     * @apiParam {Number}   status=0        订单列表（0:全部，1:待付款，2:已付款，3:已发货，4:已完成）
+     * @apiParam {Number}   [status]        订单列表（0:待确认，1:待付款，2:已付款，3:已发货，4:已完成）
      * @apiParam {Number}   [cur_page=1]    当前第几页
      *
      * @apiSuccess {Number} status      状态码（0:失败，1:成功, -1:需要重新登陆）
@@ -47,7 +51,7 @@ class OrderController extends Controller
      *                  {
      *                      "User_ID": "4",  //用户ID
      *                      "Order_ID": 4,  //订单ID
-     *                      "Order_Status": 4, //订单状态（1:待付款，2:已付款，3:已发货，4:已完成）
+     *                      "Order_Status": 4, //订单状态（0:待确认，1:待付款，2:已付款，3:已发货，4:已完成）
      *                      "Order_CartList": {    //订单商品列表
      *                               "11": [   //商品ID
      *                                  {
@@ -88,6 +92,7 @@ class OrderController extends Controller
      *                      "Order_Type": "shop",   //订单类型
      *                      "order_coin": 0,  //订单使用积分
      *                      "Order_ShippingID": "0",   //快递单号
+     *                      "Is_Commit": 0,  //是否已评论（0:未评论，1:已评论）
      *                      "Order_No": "201807314",   //订单编号
      *                      "shipping_trace": "http://m.kuaidi100.com/index_all.html?type=&postid=&callbackurl=http://localhost:6002/index.php?UserID=4&status=0",  //快递100查询接口
      *                      "Shipping_Express": "",   //快递公司名称
@@ -109,50 +114,52 @@ class OrderController extends Controller
         $input = $request->input();
         $rules = [
             'UserID' => 'required|exists:user,User_ID',
-            'status' => 'required|in:0,1,2,3,4',
+            'status' => 'nullable|in:0,1,2,3,4',
             'cur_page' => 'nullable|integer|min:1'
         ];
         $message = [
             'UserID.required' => '缺少必要的参数UserID',
             'UserID.exists' => '此用户不存在',
-            'status.required' => '订单状态不能为空',
             'status.in' => '订单状态值不符合规则',
         ];
         $validator = Validator::make($input, $rules, $message);
-        if($validator->fails()){
+        if ($validator->fails()) {
             $data = ['status' => 0, 'msg' => $validator->messages()->first()];
             return json_encode($data);
         }
 
         //在订单列表中不显示申请退款订单
         $filter = ['User_ID', 'Order_ID', 'Order_Status', 'Order_CartList', 'Order_TotalPrice', 'Order_Type',
-            'order_coin', 'Order_ShippingID'];
+            'order_coin', 'Order_ShippingID', 'Is_Commit'];
         $cur_page = isset($input['cur_page']) ? $input['cur_page'] : 1;
         $uo_obj = new UserOrder();
         $uo_obj = $uo_obj->where('User_ID', $input['UserID'])
             ->where('Is_Backup', '<>', 1)
             ->whereRaw("Order_Type='shop' or Order_Type='offline_charge'")
             ->orderBy('Order_CreateTime', 'desc');
-        if($input['status'] == 1){
-            $lists = $uo_obj->whereRaw("Order_Status= 1 or Order_Status=31")
-                ->paginate(15, $filter, $cur_page);
-        } elseif($input['status'] == 0){
+
+        if (!isset($input['status'])) {
             $lists = $uo_obj->paginate(15, $filter, $cur_page);
         } else {
-            $lists = $uo_obj->where('Order_Status', $input['status'])
-                ->paginate(15, $filter, $cur_page);
+            if ($input['status'] == 1) {
+                $lists = $uo_obj->whereRaw("Order_Status= 1 or Order_Status=31")
+                    ->paginate(15, $filter, $cur_page);
+            } else {
+                $lists = $uo_obj->where('Order_Status', $input['status'])
+                    ->paginate(15, $filter, $cur_page);
+            }
         }
 
-        foreach($lists as $key => $value){
+        foreach ($lists as $key => $value) {
             $uo_obj2 = new UserOrder();
             $value['Order_CartList'] = json_decode($value['Order_CartList'], true);
             $value['Order_No'] = $uo_obj2->getorderno($value['Order_ID']);
 
-            $shipping = json_decode(htmlspecialchars_decode($value['Order_Shipping']),true) ;
-            if(!empty($shipping['Express'])){
-                $value['shipping_trace'] = 'http://m.kuaidi100.com/index_all.html?type='.$shipping['Express'].'&postid='.$value["Order_ShippingID"].'&callbackurl='.'http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'];
-                $value['Shipping_Express'] = !empty($shipping['Express'])?$shipping['Express'].'-':'';
-            }else{
+            $shipping = json_decode(htmlspecialchars_decode($value['Order_Shipping']), true);
+            if (!empty($shipping['Express'])) {
+                $value['shipping_trace'] = 'http://m.kuaidi100.com/index_all.html?type=' . $shipping['Express'] . '&postid=' . $value["Order_ShippingID"] . '&callbackurl=' . 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?' . $_SERVER['QUERY_STRING'];
+                $value['Shipping_Express'] = !empty($shipping['Express']) ? $shipping['Express'] . '-' : '';
+            } else {
                 $value['shipping_trace'] = 'javascript:void(0)';
                 $value['Shipping_Express'] = '';
             }
@@ -164,11 +171,9 @@ class OrderController extends Controller
     }
 
 
-
-
     /**
      * @api {get} /center/order_detail  订单详情
-     * @apiGroup 用户中心
+     * @apiGroup 订单中心
      * @apiDescription 订单详情
      *
      * @apiHeader {String} access-key   用户登陆认证token
@@ -323,7 +328,7 @@ class OrderController extends Controller
             'OrderID.exists' => '此订单不存在',
         ];
         $validator = Validator::make($input, $rules, $message);
-        if($validator->fails()){
+        if ($validator->fails()) {
             $data = ['status' => 0, 'msg' => $validator->messages()->first()];
             return json_encode($data);
         }
@@ -331,31 +336,31 @@ class OrderController extends Controller
         $uo_obj = new UserOrder();
         $rsOrder = $uo_obj->find($input['OrderID']);
 
-        $Order_Status=array("待确认","待付款","已付款","已发货","已完成");
+        $Order_Status = array("待确认", "待付款", "已付款", "已发货", "已完成");
         $rsOrder['status'] = $Order_Status[$rsOrder["Order_Status"]];
 
-        $rsOrder['shipping']=json_decode(htmlspecialchars_decode($rsOrder["Order_Shipping"]),true);
-        $rsOrder['CartList']=json_decode(htmlspecialchars_decode($rsOrder["Order_CartList"]),true);
+        $rsOrder['shipping'] = json_decode(htmlspecialchars_decode($rsOrder["Order_Shipping"]), true);
+        $rsOrder['CartList'] = json_decode(htmlspecialchars_decode($rsOrder["Order_CartList"]), true);
 
         $rsOrder['amount'] = $fee = 0;
-        if($rsOrder['store_mention'] == 1){//到店自提订单不计算运费
+        if ($rsOrder['store_mention'] == 1) {//到店自提订单不计算运费
             $rsOrder['amount'] = $rsOrder["Order_TotalAmount"];
-        }else{
+        } else {
             $fee = empty($Shipping["Price"]) ? 0 : $Shipping["Price"];
             $rsOrder['amount'] = $rsOrder["Order_TotalAmount"] - $fee;
         }
 
         //收货地址
         $a_obj = new Area();
-        if(!empty($rsOrder['Address_Province'])){
+        if (!empty($rsOrder['Address_Province'])) {
             $province = $a_obj->select('area_name')->find($rsOrder['Address_Province']);
-            $rsOrder['Province'] = $province['area_name'].',';
+            $rsOrder['Province'] = $province['area_name'] . ',';
         }
-        if(!empty($rsOrder['Address_City'])){
+        if (!empty($rsOrder['Address_City'])) {
             $City = $a_obj->select('area_name')->find($rsOrder['Address_City']);
-            $rsOrder['City'] = $City['area_name'].',';
+            $rsOrder['City'] = $City['area_name'] . ',';
         }
-        if(!empty($rsOrder['Address_Area'])){
+        if (!empty($rsOrder['Address_Area'])) {
             $Area = $a_obj->select('area_name')->find($rsOrder['Address_Area']);
             $rsOrder['Area'] = $Area['area_name'];
         }
@@ -364,31 +369,271 @@ class OrderController extends Controller
         $dl_obj = new Dis_Level();
         $dis_level = $dl_obj->select('Level_LimitValue')->get();
         $is_level_product_id = array();
-        foreach($dis_level as $key => $value){
+        foreach ($dis_level as $key => $value) {
             $is_level_product_id[] = explode('|', $value['Level_LimitValue'])[1];
         }
         $is_lp_id = implode(',', $is_level_product_id);
         $is_lp_id = explode(',', $is_lp_id);
         $CartListKey = array_keys($rsOrder['CartList'])[0];
-        if(in_array($CartListKey, $is_lp_id)){
+        if (in_array($CartListKey, $is_lp_id)) {
             $rsOrder['is_level_product'] = 1;//门槛商品
-        }else{
+        } else {
             $rsOrder['is_level_product'] = 0;//非门槛商品
         }
 
         //自动收货时间
         $sc_obj = new ShopConfig();
         $rsConfig = $sc_obj->find(USERSID);
-        $rsOrder['Confirm_Time'] = number_format(($rsConfig['Confirm_Time']-time()+$rsOrder["Order_SendTime"])/86400,0,'.','');
-        $rsOrder['Auto_Confirm_Time'] = $rsConfig['Confirm_Time']/86400;
+        $rsOrder['Confirm_Time'] = number_format(($rsConfig['Confirm_Time'] - time() + $rsOrder["Order_SendTime"]) / 86400, 0, '.', '');
+        $rsOrder['Auto_Confirm_Time'] = $rsConfig['Confirm_Time'] / 86400;
 
         $rsOrder['Order_SendTime'] = date('Y-m-d H:i:s', $rsOrder['Order_SendTime']);
         $rsOrder['Order_CreateTime'] = date('Y-m-d H:i:s', $rsOrder['Order_CreateTime']);
         $rsOrder['Order_No'] = $uo_obj->getorderno($rsOrder['Order_ID']);
 
-        unset($rsOrder['Order_CartList']);unset($rsOrder['Order_Shipping']);
+        unset($rsOrder['Order_CartList']);
+        unset($rsOrder['Order_Shipping']);
 
         $data = ['status' => 1, 'msg' => '获取订单详情成功', 'data' => $rsOrder];
+        return json_encode($data);
+
+    }
+
+
+    /**
+     * @api {get} /center/order_cancel  取消订单
+     * @apiGroup 订单中心
+     * @apiDescription 取消订单
+     *
+     * @apiHeader {String} access-key   用户登陆认证token
+     *
+     * @apiParam {Number}   UserID          用户ID
+     * @apiParam {Number}   OrderID         订单ID
+     *
+     * @apiSuccess {Number} status      状态码（0:失败，1:成功, -1:需要重新登陆）
+     * @apiSuccess {String} msg         返回状态说明信息
+     * @apiSuccess {Object} data        订单数据
+     *
+     * @apiExample {curl} Example usage:
+     *     curl -i http://localhost:6002/api/center/order_cancel
+     *
+     * @apiSampleRequest /api/center/order_cancel
+     *
+     * @apiErrorExample {json} Error-Response:
+     *     {
+     *          "status": "0",
+     *          "msg": "取消订单失败",
+     *     }
+     * @apiSuccessExample {json} Success-Response:
+     *     {
+     *          "status": "1",
+     *          "msg": "取消订单成功",
+     *     }
+     */
+    public function cancel(Request $request)
+    {
+        $input = $request->input();
+        $rules = [
+            'UserID' => 'required|exists:user,User_ID',
+            'OrderID' => "required|exists:user_order,Order_ID,User_ID,{$input['UserID']}",
+        ];
+        $message = [
+            'UserID.required' => '缺少必要的参数UserID',
+            'UserID.exists' => '此用户不存在',
+            'OrderID.required' => '缺少必要的参数OrderID',
+            'OrderID.exists' => '此订单不存在',
+        ];
+        $validator = Validator::make($input, $rules, $message);
+        if ($validator->fails()) {
+            $data = ['status' => 0, 'msg' => $validator->messages()->first()];
+            return json_encode($data);
+        }
+
+        $dr_obj = new Dis_Record();
+        $uo_obj = new UserOrder();
+
+        //若是分销订单，删除分销记录
+        if ($uo_obj->is_distribute_order($input['OrderID'])) {
+            $dr_obj->delete_distribute_record($input['OrderID']);
+        }
+
+        $Flag = $uo_obj->destroy($input['OrderID']);
+
+        if ($Flag) {
+            $data = ['status' => 1, 'msg' => '取消订单成功'];
+        } else {
+            $data = ['status' => 0, 'msg' => '取消订单失败'];
+        }
+
+        return json_encode($data);
+    }
+
+
+    /**
+     * @api {post} /center/order_commit  提交评论
+     * @apiGroup 订单中心
+     * @apiDescription 提交评论
+     *
+     * @apiHeader {String} access-key   用户登陆认证token
+     *
+     * @apiParam {Number}   UserID          用户ID
+     * @apiParam {Number}   OrderID         订单ID
+     * @apiParam {Number}   Score           卖家打分（1，2，3，4，5）
+     * @apiParam {String}   Note            评论内容
+     *
+     * @apiSuccess {Number} status      状态码（0:失败，1:成功, -1:需要重新登陆）
+     * @apiSuccess {String} msg         返回状态说明信息
+     * @apiSuccess {Object} data        订单数据
+     *
+     * @apiExample {curl} Example usage:
+     *     curl -i http://localhost:6002/api/center/order_commit
+     *
+     * @apiSampleRequest /api/center/order_commit
+     *
+     * @apiErrorExample {json} Error-Response:
+     *     {
+     *          "status": "0",
+     *          "msg": "提交评论失败",
+     *     }
+     * @apiSuccessExample {json} Success-Response:
+     *     {
+     *          "status": "1",
+     *          "msg": "提交评论成功",
+     *     }
+     */
+    public function commit(Request $request)
+    {
+        $input = $request->input();
+        $rules = [
+            'UserID' => 'required|exists:user,User_ID',
+            'OrderID' => "required|exists:user_order,Order_ID,User_ID,{$input['UserID']}",
+            'Score' => 'required|in:1,2,3,4,5',
+            'Note' => 'required'
+        ];
+        $message = [
+            'UserID.required' => '缺少必要的参数UserID',
+            'UserID.exists' => '此用户不存在',
+            'OrderID.required' => '缺少必要的参数OrderID',
+            'OrderID.exists' => '此订单不存在',
+            'Note.required' => '评论内容不能为空',
+        ];
+        $validator = Validator::make($input, $rules, $message);
+        if ($validator->fails()) {
+            $data = ['status' => 0, 'msg' => $validator->messages()->first()];
+            return json_encode($data);
+        }
+
+        $sc_obj = new ShopConfig();
+        $rsConfig = $sc_obj->select('Commit_Check')->find(USERSID);
+
+        $uo_obj = new UserOrder();
+        $rsOrder = $uo_obj->where('Order_Status', 4)->find($input['OrderID']);
+        if (!$rsOrder) {
+            $data = ["status" => 0, "msg" => "无此订单"];
+        } else {
+            if ($rsOrder["Is_Commit"] == 1) {
+                $data = ["status" => 0, "msg" => "此订单已评论过，不可重复评论"];
+            } else {
+                $rsOrder->Is_Commit = 1;
+                $rsOrder->save();
+
+                $CartList = json_decode(htmlspecialchars_decode($rsOrder["Order_CartList"]), true);
+                foreach ($CartList as $key => $v) {
+                    $Data2 = array(
+                        "MID" => $rsOrder["Order_Type"],
+                        "Order_ID" => $input['OrderID'],
+                        "Biz_ID" => $rsOrder["Biz_ID"],
+                        "Product_ID" => $key,
+                        "Score" => $input["Score"],
+                        "Note" => $input["Note"],
+                        "Status" => $rsConfig["Commit_Check"] == 1 ? 1 : 0,
+                        "Users_ID" => USERSID,
+                        "User_ID" => $input['UserID'],
+                        "CreateTime" => time()
+                    );
+                    $uoc_obj = new User_Order_Commit();
+                    $uoc_obj->create($Data2);
+                }
+
+                $data = ['status' => 1, 'msg' => '提交评论成功'];
+            }
+        }
+
+        return json_encode($data);
+    }
+
+
+    /**
+     * @api {get} /center/order_receive  确认收货
+     * @apiGroup 订单中心
+     * @apiDescription 确认收货
+     *
+     * @apiHeader {String} access-key   用户登陆认证token
+     *
+     * @apiParam {Number}   UserID          用户ID
+     * @apiParam {Number}   OrderID         订单ID
+     *
+     * @apiSuccess {Number} status      状态码（0:失败，1:成功, -1:需要重新登陆）
+     * @apiSuccess {String} msg         返回状态说明信息
+     * @apiSuccess {Object} data        订单数据
+     *
+     * @apiExample {curl} Example usage:
+     *     curl -i http://localhost:6002/api/center/order_receive
+     *
+     * @apiSampleRequest /api/center/order_receive
+     *
+     * @apiErrorExample {json} Error-Response:
+     *     {
+     *          "status": "0",
+     *          "msg": "确认收货失败",
+     *     }
+     * @apiSuccessExample {json} Success-Response:
+     *     {
+     *          "status": "1",
+     *          "msg": "确认收货成功",
+     *     }
+     */
+    public function receive(Request $request)
+    {
+        $input = $request->input();
+        $rules = [
+            'UserID' => 'required|exists:user,User_ID',
+            'OrderID' => "required|exists:user_order,Order_ID,User_ID,{$input['UserID']}",
+        ];
+        $message = [
+            'UserID.required' => '缺少必要的参数UserID',
+            'UserID.exists' => '此用户不存在',
+            'OrderID.required' => '缺少必要的参数OrderID',
+            'OrderID.exists' => '此订单不存在',
+        ];
+        $validator = Validator::make($input, $rules, $message);
+        if ($validator->fails()) {
+            $data = ['status' => 0, 'msg' => $validator->messages()->first()];
+            return json_encode($data);
+        }
+
+        $uo_obj = new UserOrder();
+        $rsOrder = $uo_obj->select('Order_Status', 'Order_Type')->find($input['OrderID']);
+
+        $ubo_obj = new User_Back_Order();
+        $rsOrder_back = $ubo_obj->select('Back_Status')
+            ->where('Back_Status', '<>', 4)
+            ->where('Order_ID', $input['OrderID'])->first();
+        if ($rsOrder_back) {
+            $data = ["status" => 0, "msg" => '退款未结束，无法确认收货'];
+            return json_encode($data);
+        }
+
+        if ($rsOrder["Order_Status"] <> 3) {
+            $data = ["status" => 0, "msg" => '只有在‘已发货’状态下才可确认收货'];
+        } else {
+            $Flag = $uo_obj->confirmReceive($input['OrderID']);
+            if ($Flag) {
+                $data = ["status" => 1, "msg" => '确认收货成功'];
+            } else {
+                $data = ["status" => 0, "msg" => '确认收货失败'];
+            }
+        }
         return json_encode($data);
 
     }

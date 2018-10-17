@@ -47,6 +47,26 @@ class Dis_Record extends Model
     public function DisAccountRecord(){
         return $this->hasMany('Dis_Account_Record','Ds_Record_ID','Record_ID');
     }
+
+
+    /**
+     *删除分销记录
+     */
+    public function delete_distribute_record($OrderID)
+    {
+        //删除分销记录
+        $record_list = $this->select('Record_ID')->where('Order_ID', $OrderID)->get();
+        $this->where('Order_ID', $OrderID)->delete();
+        //删除分销账户记录
+        if(count($record_list)>0){
+            $dar_obj = new Dis_Account_Record();
+            $dar_obj->whereIn('Ds_Record_ID', $record_list)->delete();
+        }
+
+        $dpr_obj = new Dis_Point_Record();
+        $dpr_obj->where('orderid', $OrderID)->delete();
+
+    }
 	
 	
 }

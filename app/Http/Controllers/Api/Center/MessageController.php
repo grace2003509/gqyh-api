@@ -13,7 +13,7 @@ class MessageController extends Controller
 
     /**
      * @api {get} /center/sys_message_num  系统消息数量
-     * @apiGroup 用户中心
+     * @apiGroup 消息中心
      * @apiDescription 系统消息总数量和未读数量
      *
      * @apiHeader {String} access-key   用户登陆认证token
@@ -85,7 +85,7 @@ class MessageController extends Controller
 
     /**
      * @api {get} /center/sys_message_list  系统消息列表
-     * @apiGroup 用户中心
+     * @apiGroup 消息中心
      * @apiDescription 系统消息列表
      *
      * @apiHeader {String} access-key   用户登陆认证token
@@ -185,7 +185,7 @@ class MessageController extends Controller
 
     /**
      * @api {get} /center/sys_message_read  读取系统消息
-     * @apiGroup 用户中心
+     * @apiGroup 消息中心
      * @apiDescription 读取系统消息
      *
      * @apiHeader {String} access-key   用户登陆认证token

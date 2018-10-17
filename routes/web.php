@@ -27,6 +27,7 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function ($route){
     $route->group(['prefix' => 'center', 'namespace' => 'Center',  'middleware' => ['check_auth']], function ($api) {
         //用户信息
         $api->get('/user_info', 'UserInfoController@user_info');
+        $api->post('/upload_headimg', 'UserInfoController@upload_headimg');
         //系统消息
         $api->get('/sys_message_num', 'MessageController@sys_message_num');
         $api->get('/sys_message_list', 'MessageController@sys_message_list');
@@ -34,6 +35,9 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function ($route){
         //订单列表、详情
         $api->get('/order_list', 'OrderController@index');
         $api->get('/order_detail', 'OrderController@show');
+        $api->get('/order_cancel', 'OrderController@cancel');
+        $api->post('/order_commit', 'OrderController@commit');
+        $api->get('/order_receive', 'OrderController@receive');
     });
 
 });
