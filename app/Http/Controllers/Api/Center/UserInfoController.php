@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Api\Center;
 
+use App\Models\Dis_Account;
 use App\Models\Dis_Level;
 use App\Models\Member;
 use App\Models\ShopConfig;
+use App\Models\UploadFile;
+use App\Services\ImageThum;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -106,6 +109,7 @@ class UserInfoController extends Controller
      *
      * @apiParam {Number}   UserID      用户ID
      * @apiParam {Number}   img_url     用户头像路径
+     * @apiParam {String}   upthumb     上传图片元素名称
      *
      * @apiSuccess {Number} status      状态码（0:失败，1:成功, -1:需要重新登陆）
      * @apiSuccess {String} msg         返回状态说明信息
@@ -131,18 +135,197 @@ class UserInfoController extends Controller
         $input = $request->input();
 
         $rules = [
-            'UserID' => 'required|exists:user,User_ID'
+            'UserID' => 'required|exists:user,User_ID',
+            'up_head' => 'required'
         ];
         $message = [
             'UserID.required' => '缺少必要的参数UserID',
             'UserID.exists' => '此用户不存在',
+            'up_head.required' => '请选择图片上传',
         ];
         $validator = Validator::make($input, $rules, $message);
         if($validator->fails()){
             $data = ['status' => 0, 'msg' => $validator->messages()->first()];
             return json_encode($data);
         }
-        //todo
+
+        $php_path = ADMIN_BASE_HOST.'/';
+        $save_path = $php_path.'uploadfiles/userfile/';
+        $save_url = '/uploadfiles/userfile/';
+        $ext_arr = array(
+            'image' => array('gif', 'jpg', 'jpeg', 'png'),
+        );
+        $max_size = 8 * 1024 * 1024;
+        $save_path = realpath($save_path) . '/';
+
+        if (!empty($_FILES['up_head']['error'])) {
+            switch($_FILES['up_head']['error']){
+                case '1':
+                    $error = "上传文件大小超过" . ($max_size) . "K限制。";	//'超过php.ini允许的大小。';
+                    break;
+                case '2':
+                    $error = '超过表单允许的大小。';
+                    break;
+                case '3':
+                    $error = '图片只有部分被上传。';
+                    break;
+                case '4':
+                    $error = '请选择图片。';
+                    break;
+                case '6':
+                    $error = '找不到临时目录。';
+                    break;
+                case '7':
+                    $error = '写文件到硬盘出错。';
+                    break;
+                case '8':
+                    $error = 'File upload stopped by extension。';
+                    break;
+                case '999':
+                default:
+                    $error = '未知错误。';
+            }
+            $data = ['status' => 0, 'msg' => $error];
+            return json_encode($data);
+        }
+
+        //有上传文件时
+        if (empty($_FILES) === false) {
+            //原文件名
+            $file_name = $_FILES['up_head']['name'];
+            //服务器上临时文件名
+            $tmp_name = $_FILES['up_head']['tmp_name'];
+            //文件大小
+            $file_size = $_FILES['up_head']['size'];
+            $error = '';
+            //检查文件名
+            if (!$file_name) {
+                $error = '请选择文件';
+            }
+            //检查目录
+            if (@is_dir($save_path) === false) {
+                $error = '上传目录不存在';
+            }
+            //检查目录写权限
+            if (@is_writable($save_path) === false) {
+                $error = '上传目录没有写权限';
+            }
+            //检查是否已上传
+            if (@is_uploaded_file($tmp_name) === false) {
+                $error = '上传失败';
+            }
+            //检查文件大小
+            if ($file_size > $max_size) {
+                $error = "上传文件大小超过".($max_size/1024)."K限制。";
+            }
+            //检查目录名
+            $dir_name = !isset($input['dir']) ? 'image' : trim($input['dir']);
+            if (empty($ext_arr[$dir_name])) {
+                $error = '目录名不正确';
+            }
+
+            if($error != ''){
+                $data = ['status' => 0, 'msg' => $error];
+                return json_encode($data);
+            }
+
+            //获得文件扩展名
+            $temp_arr = explode(".", $file_name);
+            $file_ext = array_pop($temp_arr);
+            $file_ext = trim($file_ext);
+            $file_ext = strtolower($file_ext);
+            //检查扩展名
+            if (in_array($file_ext, $ext_arr[$dir_name]) === false) {
+                $error = "上传文件扩展名是不允许的扩展名。\n只允许" . implode(",", $ext_arr[$dir_name]) . "格式。";
+                $data = ['status' => 0, 'msg' => $error];
+                return json_encode($data);
+            }
+            //创建文件夹
+            if (!file_exists($save_path)) {
+                mkdir($save_path);
+            }
+            $save_path .= $input['UserID'] . "/";
+            $save_url .= $input['UserID'] . "/";
+            if (!file_exists($save_path)) {
+                mkdir($save_path);
+            }
+            if ($dir_name !== '') {
+                $save_path .= $dir_name . "/";
+                $save_url .= $dir_name . "/";
+                if (!file_exists($save_path)) {
+                    mkdir($save_path);
+                }
+            }
+            //新文件名
+            $UploadFilesID=dechex(time()) . dechex(rand(16, 255));
+            $new_file_name = $UploadFilesID . '.' . $file_ext;
+            //移动文件
+            $file_path = $save_path . $new_file_name;
+
+            if($file_ext != 'jpeg'){
+                $image = imagecreatefromstring(file_get_contents($tmp_name));
+                $exif = exif_read_data ($tmp_name,0,true);
+                if(isset($exif['IFD0']['Orientation'])) {
+                    switch ($exif['IFD0']['Orientation']) {
+                        case 8:
+                            $image = imagerotate($image, 90, 0);
+                            break;
+                        case 3:
+                            $image = imagerotate($image, 180, 0);
+                            break;
+                        case 6:
+                            $image = imagerotate($image, -90, 0);
+                            break;
+                    }
+                    imagejpeg($image, $tmp_name);
+                }
+            }
+
+            if (move_uploaded_file($tmp_name, $file_path) === false) {
+                $error = '上传文件失败';
+                $data = ['status' => 0, 'msg' => $error];
+                return json_encode($data);
+            }
+
+            @chmod($file_path, 0644);
+            $file_url = $save_url . $new_file_name;
+            if (in_array($file_ext, $ext_arr['image']) !== false) {
+                //创建文件夹
+                if (!file_exists($save_path . 'n0/')) {
+                    mkdir($save_path . 'n0/');
+                }
+                $thumImg = new ImageThum();
+                //开始缩略图
+                $thumImg->littleImage($file_path, $save_path . 'n0/', 200);
+            }
+
+            /*向数据库中插入记录*/
+            $uf_obj = new UploadFile();
+            $files_data = [
+                'UploadFiles_ID' => $UploadFilesID,
+                'UploadFiles_TableField' => 'userfile',
+                'UploadFiles_DirName' => $dir_name,
+                'UploadFiles_SavePath' => $file_url,
+                'UploadFiles_FileName' => $file_name,
+                'UploadFiles_FileSize' => number_format($file_size/1024,2,".",""),
+                'UploadFiles_CreateDate' => date("Y-m-d H:i:s"),
+            ];
+            $uf_obj->create($files_data);
+
+            $m_obj = new Member();
+            $da_obj = new Dis_Account();
+            $Account = $da_obj->where('User_ID', $input['UserID'])->first();
+            if ($Account) {
+                $Account->Shop_Logo = $file_url;
+                $Account->Is_Regeposter = 1;
+                $Flag = $Account->save();
+            }
+            //同时用户表的头像信息
+            $Flag = $m_obj->where('User_ID', $input['UserID'])->update(['User_HeadImg' => $file_url]);
+
+            $data = ['status' => 1, 'msg' => '头像上传成功'];
+            return json_encode($data);
+        }
     }
 
 }
