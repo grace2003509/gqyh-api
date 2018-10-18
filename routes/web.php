@@ -46,6 +46,8 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function ($route){
         //余额
     });
 
+    $route->get('/center/integral_rate', 'IntegralController@get_integral_rate');  //积分充值比例
+
 });
 
 

@@ -1,84 +1,6 @@
 define({ "api": [
   {
     "type": "get",
-    "url": "/test/:id",
-    "title": "测试接口",
-    "name": "____",
-    "group": "test",
-    "description": "<p>测试接口</p>",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "String",
-            "optional": true,
-            "field": "access_token",
-            "description": "<p>Users unique access_token.</p>"
-          }
-        ]
-      }
-    },
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "optional": false,
-            "field": "id",
-            "description": "<p>用户ID</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "firstname",
-            "description": "<p>Firstname of the Admin.</p>"
-          }
-        ]
-      },
-      "examples": [
-        {
-          "title": "Success-Response:",
-          "content": "{\n  \"status\": \"1\"\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "examples": [
-      {
-        "title": "Example usage:",
-        "content": "curl -i http://localhost:6002/api/test/4711",
-        "type": "curl"
-      }
-    ],
-    "sampleRequest": [
-      {
-        "url": "/api/test/:id"
-      }
-    ],
-    "error": {
-      "examples": [
-        {
-          "title": "Error-Response:",
-          "content": "HTTP/1.1 404 Not Found\n{\n  \"error\": \"UserNotFound\"\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "version": "0.0.0",
-    "filename": "app/Http/Controllers/Api/TestController.php",
-    "groupTitle": "test"
-  },
-  {
-    "type": "get",
     "url": "/center/sys_message_list",
     "title": "系统消息列表",
     "group": "消息中心",
@@ -1094,6 +1016,72 @@ define({ "api": [
     "filename": "app/Http/Controllers/Api/IntegralController.php",
     "groupTitle": "积分",
     "name": "GetCenterIntegral_info"
+  },
+  {
+    "type": "get",
+    "url": "/center/integral_rate",
+    "title": "积分充值比例",
+    "group": "积分",
+    "description": "<p>获取积分充值比例设置信息</p>",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>用户信息数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": 5   //积分充值比例1:5，即1元=5积分\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/center/integral_rate",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/center/integral_rate"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"缺少必要的参数UserID\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/IntegralController.php",
+    "groupTitle": "积分",
+    "name": "GetCenterIntegral_rate"
   },
   {
     "type": "get",

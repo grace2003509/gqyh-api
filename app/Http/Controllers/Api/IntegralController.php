@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Member;
+use App\Models\ShopConfig;
 use App\Models\User_Config;
 use App\Models\UserIntegralRecord;
 use Illuminate\Http\Request;
@@ -410,5 +411,41 @@ class IntegralController extends Controller
 
         return json_encode($data);
 
+    }
+
+
+    /**
+     * @api {get} /center/integral_rate  积分充值比例
+     * @apiGroup 积分
+     * @apiDescription 获取积分充值比例设置信息
+     *
+     * @apiSuccess {Number} status      状态码（0:失败，1:成功, -1:需要重新登陆）
+     * @apiSuccess {String} msg         返回状态说明信息
+     * @apiSuccess {Object} data        用户信息数据
+     *
+     * @apiExample {curl} Example usage:
+     *     curl -i http://localhost:6002/api/center/integral_rate
+     *
+     * @apiSampleRequest /api/center/integral_rate
+     *
+     * @apiErrorExample {json} Error-Response:
+     *     {
+     *          "status": "0",
+     *          "msg": "缺少必要的参数UserID",
+     *     }
+     * @apiSuccessExample {json} Success-Response:
+     *     {
+     *          "status": "1",
+     *          "msg": "成功",
+     *          "data": 5   //积分充值比例1:5，即1元=5积分
+     *     }
+     */
+    public function get_integral_rate()
+    {
+        $sc_obj = new ShopConfig();
+        $rsConfig = $sc_obj->select('moneytoscore')->find(USERSID);
+
+        $data = ['status' => 1, 'msg' => '成功', 'data' => $rsConfig['moneytoscore']];
+        return json_encode($data);
     }
 }
