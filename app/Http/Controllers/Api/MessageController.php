@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Center;
+namespace App\Http\Controllers\Api;
 
 use App\Models\User_Message;
 use App\Models\User_Message_Record;

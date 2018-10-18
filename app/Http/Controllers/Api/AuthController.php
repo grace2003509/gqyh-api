@@ -474,6 +474,7 @@ class AuthController extends Controller
             $user_data["Owner_Id"] = $input['OwnerID'];
             $user_data["Root_ID"] = $root_id;
             $user_data['User_Integral'] = $shop_config['Popularize_Integral'];
+            $user_data['User_TotalIntegral'] = $shop_config['Popularize_Integral'];
             unset($rsroot);
         }
 
@@ -489,9 +490,10 @@ class AuthController extends Controller
 
         if(isset($input['OwnerID']) && $input['OwnerID'] > 0){
             //推荐人得积分
-            $rsOwner = $m_obj->select('User_ID', 'User_Integral')->find(intval($input['OwnerID']));
+            $rsOwner = $m_obj->select('User_ID', 'User_Integral', 'User_TotalIntegral')->find(intval($input['OwnerID']));
             $integral = $shop_config['Popularize_Integral'] + $rsOwner['User_Integral'];
             $rsOwner->User_Integral = $integral;
+            $rsOwner->User_TotalIntegral = $shop_config['Popularize_Integral'] + $rsOwner['User_TotalIntegral'];
             $rsOwner->save();
 
             $uir_obj = new UserIntegralRecord();

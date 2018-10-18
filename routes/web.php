@@ -24,7 +24,7 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function ($route){
     $route->get('/check_sms', 'AuthController@checkSMS');//验证短信验证码
 
     //个人中心
-    $route->group(['prefix' => 'center', 'namespace' => 'Center',  'middleware' => ['check_auth']], function ($api) {
+    $route->group(['prefix' => 'center', 'middleware' => ['check_auth']], function ($api) {
         //用户信息
         $api->get('/user_info', 'UserInfoController@user_info');
         $api->post('/upload_headimg', 'UserInfoController@upload_headimg');
@@ -38,6 +38,12 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function ($route){
         $api->get('/order_cancel', 'OrderController@cancel');
         $api->post('/order_commit', 'OrderController@commit');
         $api->get('/order_receive', 'OrderController@receive');
+        //积分
+        $api->get('/integral_info', 'IntegralController@integral_info');
+        $api->get('/integral_record', 'IntegralController@integral_record');
+        $api->post('/do_sign', 'IntegralController@do_sign');
+        $api->post('/integral_largess', 'IntegralController@integral_largess');
+        //余额
     });
 
 });

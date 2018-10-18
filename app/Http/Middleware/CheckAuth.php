@@ -28,8 +28,11 @@ class CheckAuth
 
         } else {
             $token_arr = explode('.', $request->header('access-key'));
-            $expire_time = base64_decode($token_arr[1]);
-            if (time() > $expire_time) {
+            $token_arr[0] = isset($token_arr[0]) ? $token_arr[0] : '';
+            $expire_time = isset($token_arr[1]) ? base64_decode($token_arr[1]) : 0;
+            $token_arr[2] = isset($token_arr[2]) ? $token_arr[2] : '';
+
+            if (time() > $expire_time || md5(USERSID) != $token_arr[2]) {
                 return response(['status' => -1, 'msg' => '请重新登陆']);
             }
 
@@ -43,6 +46,7 @@ class CheckAuth
             if (!$user_info) {
                 return response(['status' => 0, 'msg' => '此用户不存在']);
             }
+
             if ($user_info['remark_token'] == '' || $user_info['remark_token'] != $token_arr[0]) {
                 return response(['status' => -1, 'msg' => '请重新登陆']);
             }

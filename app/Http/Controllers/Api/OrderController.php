@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Api\Center;
+namespace App\Http\Controllers\Api;
 
 use App\Models\Area;
-use App\Models\Dis_Account_Record;
 use App\Models\Dis_Level;
 use App\Models\Dis_Record;
 use App\Models\ShopConfig;

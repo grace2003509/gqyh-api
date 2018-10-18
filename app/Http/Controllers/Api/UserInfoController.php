@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Center;
+namespace App\Http\Controllers\Api;
 
 use App\Models\Dis_Account;
 use App\Models\Dis_Level;
@@ -46,6 +46,8 @@ class UserInfoController extends Controller
      *                  "User_No": 600017,  //用户编号
      *                  "User_Mobile": "13274507043",  //用户手机号
      *                  "User_NickName": null,  //用户昵称
+     *                  "User_Integral": 20,  //用户当前积分
+     *                  "User_Money": 1314,  //用户当前余额
      *                  "User_Level": 0,  //用户等级
      *                  "User_HeadImg": "http://localhost:6001//uploadfiles/9nj50igwex/image/5b87a19025.png",  //用户头像
      *                  "Is_Distribute": 0,  //是否是分销商（0:普通账户，1:分销账户）
@@ -77,8 +79,8 @@ class UserInfoController extends Controller
         $dis_level = get_dropdown_list($dis_level, 'Level_ID', 'Level_Name');
         $shopconfig = $sc_obj->select('ShopLogo')->find(USERSID);
 
-        $filter = ['User_ID', 'User_No', 'User_Mobile', 'User_NickName', 'User_Level',
-            'User_HeadImg', 'Is_Distribute', 'User_CreateTime'];
+        $filter = ['User_ID', 'User_No', 'User_Mobile', 'User_NickName', 'User_Level', 'User_HeadImg', 'Is_Distribute',
+            'User_CreateTime','User_Integral', 'User_Money'];
         $user = $m_obj->select($filter)->find($input['UserID']);
         if($user->Is_Distribute == 1){
             $user->User_Level = $dis_level[@$user->disAccount->Level_ID];

@@ -14,4 +14,5 @@ class UserIntegralRecord extends Model
         'Users_ID', 'User_ID', 'Record_Integral', 'Record_SurplusIntegral', 'Operator_UserName', 'Record_Type',
         'Record_Description', 'Record_CreateTime', 'Action_ID'
     ];
+    protected $hidden = ['Users_ID', 'Record_SurplusIntegral', 'Action_ID'];
 }
