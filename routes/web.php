@@ -52,6 +52,9 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function ($route){
         $api->get('/lose_coupon', 'CouponController@lose_coupon');
         $api->post('/get_coupon', 'CouponController@get_coupon');
         //地址管理
+        $api->get('address_list', 'AddressController@index');
+        $api->post('address_edit', 'AddressController@update');
+        $api->post('address_del', 'AddressController@del');
     });
 
     $route->get('/center/integral_rate', 'IntegralController@get_integral_rate');  //积分充值比例

@@ -2,12 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Member;
 use App\Models\User_Coupon;
-use App\Models\User_Coupon_Log;
 use App\Models\User_Coupon_Record;
-use App\Models\User_Operator;
-use App\Models\UserIntegralRecord;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
