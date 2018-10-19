@@ -14,4 +14,6 @@ class UserMoneyRecord extends Model
         'Users_ID', 'User_ID', 'Type', 'Amount', 'Total', 'Note', 'CreateTime'
     ];
 
+    protected $hidden = ['Users_ID'];
+
 }

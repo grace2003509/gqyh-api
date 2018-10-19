@@ -138,7 +138,7 @@ class IntegralController extends Controller
      *              "from": 1,
      *              "last_page": 1,  //上一页
      *              "next_page_url": null,  //下一页
-     *              "path": "http://localhost:6002/api/center/sys_message_list",
+     *              "path": "http://localhost:6002/api/center/integral_record",
      *              "per_page": 15,   //每页数量
      *              "prev_page_url": null,
      *              "to": 1,

@@ -13,4 +13,12 @@ class UserCharge extends Model
     protected $fillable = [
         'Users_ID', 'User_ID', 'Amount', 'Total', 'Operator', 'Status', 'CreateTime'
     ];
+
+    protected $hidden = ['Users_ID'];
+
+    //所属用户
+    public function user()
+    {
+        return $this->belongsTo(Member::class, 'User_ID', 'User_ID');
+    }
 }

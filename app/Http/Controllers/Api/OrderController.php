@@ -400,7 +400,7 @@ class OrderController extends Controller
 
 
     /**
-     * @api {get} /center/order_cancel  取消订单
+     * @api {post} /center/order_cancel  取消订单
      * @apiGroup 订单中心
      * @apiDescription 取消订单
      *
@@ -563,7 +563,7 @@ class OrderController extends Controller
 
 
     /**
-     * @api {get} /center/order_receive  确认收货
+     * @api {post} /center/order_receive  确认收货
      * @apiGroup 订单中心
      * @apiDescription 确认收货
      *

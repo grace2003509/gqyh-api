@@ -110,8 +110,7 @@ class UserInfoController extends Controller
      * @apiHeader {String} access-key   用户登陆认证token
      *
      * @apiParam {Number}   UserID      用户ID
-     * @apiParam {Number}   img_url     用户头像路径
-     * @apiParam {String}   upthumb     上传图片元素名称
+     * @apiParam {String}   up_head     上传图片元素名称
      *
      * @apiSuccess {Number} status      状态码（0:失败，1:成功, -1:需要重新登陆）
      * @apiSuccess {String} msg         返回状态说明信息

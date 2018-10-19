@@ -35,15 +35,23 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function ($route){
         //订单列表、详情
         $api->get('/order_list', 'OrderController@index');
         $api->get('/order_detail', 'OrderController@show');
-        $api->get('/order_cancel', 'OrderController@cancel');
+        $api->post('/order_cancel', 'OrderController@cancel');
         $api->post('/order_commit', 'OrderController@commit');
-        $api->get('/order_receive', 'OrderController@receive');
+        $api->post('/order_receive', 'OrderController@receive');
         //积分
         $api->get('/integral_info', 'IntegralController@integral_info');
         $api->get('/integral_record', 'IntegralController@integral_record');
         $api->post('/do_sign', 'IntegralController@do_sign');
         $api->post('/integral_largess', 'IntegralController@integral_largess');
         //余额
+        $api->get('/charge_record', 'MoneyController@charge_record');
+        $api->get('/money_record', 'MoneyController@money_record');
+        //优惠券
+        $api->get('/my_coupon', 'CouponController@my_coupon');
+        $api->get('/coupon_list', 'CouponController@coupon_list');
+        $api->get('/lose_coupon', 'CouponController@lose_coupon');
+        $api->post('/get_coupon', 'CouponController@get_coupon');
+        //地址管理
     });
 
     $route->get('/center/integral_rate', 'IntegralController@get_integral_rate');  //积分充值比例
