@@ -91,7 +91,7 @@ class MessageController extends Controller
      * @apiHeader {String} access-key   用户登陆认证token
      *
      * @apiParam {Number}   UserID          用户ID
-     * @apiParam {Number}   [cur_page=1]    当前第几页
+     * @apiParam {Number}   cur_page=1      当前第几页
      *
      * @apiSuccess {Number} status      状态码（0:失败，1:成功, -1:需要重新登陆）
      * @apiSuccess {String} msg         返回状态说明信息
@@ -139,7 +139,7 @@ class MessageController extends Controller
         $input = $request->input();
         $rules = [
             'UserID' => 'required|exists:user,User_ID',
-            'cur_page' => 'nullable|integer|min:1'
+            'cur_page' => 'required|integer|min:1'
         ];
         $message = [
             'UserID.required' => '缺少必要的参数UserID',

@@ -24,7 +24,7 @@ class OrderController extends Controller
      *
      * @apiParam {Number}   UserID          用户ID
      * @apiParam {Number}   [status]        订单列表（0:待确认，1:待付款，2:已付款，3:已发货，4:已完成）
-     * @apiParam {Number}   [cur_page=1]    当前第几页
+     * @apiParam {Number}   cur_page=1      当前第几页
      *
      * @apiSuccess {Number} status      状态码（0:失败，1:成功, -1:需要重新登陆）
      * @apiSuccess {String} msg         返回状态说明信息
@@ -114,7 +114,7 @@ class OrderController extends Controller
         $rules = [
             'UserID' => 'required|exists:user,User_ID',
             'status' => 'nullable|in:0,1,2,3,4',
-            'cur_page' => 'nullable|integer|min:1'
+            'cur_page' => 'required|integer|min:1'
         ];
         $message = [
             'UserID.required' => '缺少必要的参数UserID',
@@ -135,7 +135,8 @@ class OrderController extends Controller
         $uo_obj = $uo_obj->where('User_ID', $input['UserID'])
             ->where('Is_Backup', '<>', 1)
             ->whereRaw("Order_Type='shop' or Order_Type='offline_charge'")
-            ->orderBy('Order_CreateTime', 'desc');
+            ->orderBy('Order_CreateTime', 'desc')
+            ->orderBy('Order_Status', 'asc');
 
         if (!isset($input['status'])) {
             $lists = $uo_obj->paginate(15, $filter, $cur_page);

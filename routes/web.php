@@ -55,6 +55,13 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function ($route){
         $api->get('address_list', 'AddressController@index');
         $api->post('address_edit', 'AddressController@update');
         $api->post('address_del', 'AddressController@del');
+        //收藏夹
+        $api->get('favourite_list', 'FavouriteController@index');
+        $api->post('favourite_del', 'FavouriteController@del');
+        //退款单
+        $api->post('/order_apply_back', 'BackOrderController@apply_back');
+        $api->get('backorder_list', 'BackOrderController@index');
+
     });
 
     $route->get('/center/integral_rate', 'IntegralController@get_integral_rate');  //积分充值比例
