@@ -44,6 +44,7 @@ class IntegralController extends Controller
      *                      "today_sign": 0,   //今天是否已签到
      *                      "sign_num": 0,   //签到总次数
      *                      "integral": 20   //当前积分数
+     *                      "integral_rate": 5   //积分充值比例1:5，即1元=5积分
      *              },
      *     }
      */
@@ -67,6 +68,7 @@ class IntegralController extends Controller
         $uc_obj = new User_Config();
         $m_obj = new Member();
         $uir_obj = new UserIntegralRecord();
+        $sc_obj = new ShopConfig();
 
         $rsConfig = $uc_obj->select('IsSign')->find(USERSID);
         $user = $m_obj->select('User_Integral')->find($input['UserID']);
@@ -78,6 +80,7 @@ class IntegralController extends Controller
         }else{
             $today_sign = 0;
         }
+        $rsConfig = $sc_obj->select('moneytoscore')->find(USERSID);
 
         $data = [
             'status' => 1,
@@ -87,6 +90,7 @@ class IntegralController extends Controller
                 'today_sign' => $today_sign,
                 'sign_num' => $sign_num,
                 'integral' => $user['User_Integral'],
+                'integral_rate' => $rsConfig['moneytoscore'],
             ]
         ];
         return json_encode($data);
@@ -413,39 +417,4 @@ class IntegralController extends Controller
 
     }
 
-
-    /**
-     * @api {get} /center/integral_rate  积分充值比例
-     * @apiGroup 积分
-     * @apiDescription 获取积分充值比例设置信息
-     *
-     * @apiSuccess {Number} status      状态码（0:失败，1:成功, -1:需要重新登陆）
-     * @apiSuccess {String} msg         返回状态说明信息
-     * @apiSuccess {Object} data        用户信息数据
-     *
-     * @apiExample {curl} Example usage:
-     *     curl -i http://localhost:6002/api/center/integral_rate
-     *
-     * @apiSampleRequest /api/center/integral_rate
-     *
-     * @apiErrorExample {json} Error-Response:
-     *     {
-     *          "status": "0",
-     *          "msg": "缺少必要的参数UserID",
-     *     }
-     * @apiSuccessExample {json} Success-Response:
-     *     {
-     *          "status": "1",
-     *          "msg": "成功",
-     *          "data": 5   //积分充值比例1:5，即1元=5积分
-     *     }
-     */
-    public function get_integral_rate()
-    {
-        $sc_obj = new ShopConfig();
-        $rsConfig = $sc_obj->select('moneytoscore')->find(USERSID);
-
-        $data = ['status' => 1, 'msg' => '成功', 'data' => $rsConfig['moneytoscore']];
-        return json_encode($data);
-    }
 }

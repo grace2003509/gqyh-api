@@ -213,10 +213,6 @@ class ServiceBackOrder
 
         }
         $uo_obj->where('Order_ID', $rsOrder["Order_ID"])->update($data);
-        /*
-        if($rsOrder["Order_Status"]==2 && $rsOrder["Order_IsVirtual"]==0){//已付款,商家未发货订单退款
-            $this->update_backup("seller_recieve",$recordid,$amount."||%$%已付款/商家未发货订单退款，系统自动完成");
-        }*/
 
     }
 

@@ -285,6 +285,85 @@ class AddressController extends Controller
     }
 
 
+    /**
+     * @api {get} /center/area_list 省市区列表
+     * @apiGroup 地址管理
+     * @apiDescription 获取省市区列表
+     *
+     * @apiParam {Number}   AreaID=0      区域ID
+     *
+     * @apiSuccess {Number} status      状态码（0:失败，1:成功, -1:需要重新登陆）
+     * @apiSuccess {String} msg         返回状态说明信息
+     * @apiSuccess {Object} data        用户信息数据
+     *
+     * @apiExample {curl} Example usage:
+     *     curl -i http://localhost:6002/api/center/area_list
+     *
+     * @apiSampleRequest /api/center/area_list
+     *
+     * @apiErrorExample {json} Error-Response:
+     *     {
+     *          "status": "0",
+     *          "msg": "缺少必要的参数UserID",
+     *     }
+     * @apiSuccessExample {json} Success-Response:
+     *     {
+     *          "status": "1",
+     *          "msg": "成功",
+     *          "data": [
+     *              {
+     *                  "area_id":  1,  //区域ID
+     *                  "area_name": "北京",  //区域名称
+     *              },
+     *             {
+     *                  "area_id":  2,  //区域ID
+     *                  "area_name": "天津",  //区域名称
+     *              }
+     *          ]
+     *     }
+     */
+    public function get_area_list(Request $request)
+    {
+        $input = $request->input();
+
+        $rules = [
+            'AreaID' => 'required|integer|min:0',
+        ];
+        $validator = Validator::make($input, $rules);
+        if($validator->fails()){
+            $data = ['status' => 0, 'msg' => $validator->messages()->first()];
+            return json_encode($data);
+        }
+
+        $a_obj = new Area();
+
+        if($input['AreaID'] == 0){
+            $area_list = $a_obj->select('area_id', 'area_name')
+                ->where('area_deep', 1)
+                ->where('area_id', '<>', 35)
+                ->orderBy('area_id')->get();
+        }else{
+            $area = $a_obj->find($input['AreaID']);
+            if($area && $area['area_deep'] != 3){
+                $area_list = $a_obj->select('area_id', 'area_name')
+                    ->where('area_parent_id', $input['AreaID'])
+                    ->where('area_id', '<>', 35)
+                    ->orderBy('area_id')->get();
+            }else{
+                $area_list = [];
+            }
+        }
+
+        if(count($area_list) > 0){
+            $data = ['status' => 1, 'msg' => '成功', 'data' => $area_list];
+        }else{
+            $data = ['status' => 0, 'msg' => '失败'];
+        }
+
+        return json_encode($data);
+    }
+
+
 
     /**
      *默认地址被删除，设置另一个地址为默认

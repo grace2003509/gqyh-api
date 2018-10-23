@@ -400,6 +400,282 @@ define({ "api": [
   },
   {
     "type": "get",
+    "url": "/center/menu_list",
+    "title": "菜单列表",
+    "group": "会员中心",
+    "description": "<p>获取会员中心菜单列表</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>用户信息数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": [\n         {\n             \"Perm_Name\": \"设置\",   //菜单名称\n             \"Perm_Picture\": \"http://localhost:6001/uploadfiles/9nj50igwex/image/5b4042127f.png\",  //图标\n             \"Perm_Url\": \"/api/shop/member/setting/\"   //路径\n         },\n         {\n             \"Perm_Name\": \"退款/售后\",\n             \"Perm_Picture\": \"http://localhost:6001/uploadfiles/9nj50igwex/image/5b404231c2.png\",\n             \"Perm_Url\": \"/api/shop/member/backup/status/5/\"\n         },\n     ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/center/menu_list",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/center/menu_list"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/UserInfoController.php",
+    "groupTitle": "会员中心",
+    "name": "GetCenterMenu_list"
+  },
+  {
+    "type": "get",
+    "url": "/center/user_info",
+    "title": "用户信息",
+    "group": "会员中心",
+    "description": "<p>获取用户信息</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>用户信息数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": {\n             \"User_ID\": 17,  //用户ID\n             \"User_No\": 600017,  //用户编号\n             \"User_Mobile\": \"13274507043\",  //用户手机号\n             \"User_NickName\": null,  //用户昵称\n             \"User_Integral\": 20,  //用户当前积分\n             \"User_Money\": 1314,  //用户当前余额\n             \"User_Level\": 0,  //用户等级\n             \"User_HeadImg\": \"http://localhost:6001//uploadfiles/9nj50igwex/image/5b87a19025.png\",  //用户头像\n             \"Is_Distribute\": 0,  //是否是分销商（0:普通账户，1:分销账户）\n             \"User_CreateTime\": \"2018-10-15 10:53:54\",  //注册时间\n         },\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/center/user_info",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/center/user_info"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/UserInfoController.php",
+    "groupTitle": "会员中心",
+    "name": "GetCenterUser_info"
+  },
+  {
+    "type": "post",
+    "url": "/center/upload_headimg",
+    "title": "上传用户头像",
+    "group": "会员中心",
+    "description": "<p>上传用户头像</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "up_head",
+            "description": "<p>上传图片元素名称</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"头像上传成功\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/center/upload_headimg",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/center/upload_headimg"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/UserInfoController.php",
+    "groupTitle": "会员中心",
+    "name": "PostCenterUpload_headimg"
+  },
+  {
+    "type": "get",
     "url": "/center/charge_record",
     "title": "充值记录",
     "group": "余额",
@@ -691,6 +967,86 @@ define({ "api": [
     "name": "GetCenterAddress_list"
   },
   {
+    "type": "get",
+    "url": "/center/area_list",
+    "title": "省市区列表",
+    "group": "地址管理",
+    "description": "<p>获取省市区列表</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "AreaID",
+            "defaultValue": "0",
+            "description": "<p>区域ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>用户信息数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": [\n         {\n             \"area_id\":  1,  //区域ID\n             \"area_name\": \"北京\",  //区域名称\n         },\n        {\n             \"area_id\":  2,  //区域ID\n             \"area_name\": \"天津\",  //区域名称\n         }\n     ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/center/area_list",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/center/area_list"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"缺少必要的参数UserID\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/AddressController.php",
+    "groupTitle": "地址管理",
+    "name": "GetCenterArea_list"
+  },
+  {
     "type": "post",
     "url": "/center/address_del",
     "title": "删除地址",
@@ -957,6 +1313,409 @@ define({ "api": [
     "filename": "app/Http/Controllers/Api/AddressController.php",
     "groupTitle": "地址管理",
     "name": "PostCenterAddress_edit"
+  },
+  {
+    "type": "post",
+    "url": "/center/change_mobile",
+    "title": "更改手机号",
+    "group": "完善会员资料",
+    "description": "<p>更改手机号</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "mobile",
+            "description": "<p>手机号</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "code",
+            "description": "<p>短信验证码</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"更改手机号成功\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/center/change_mobile",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/center/change_mobile"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/UserSetController.php",
+    "groupTitle": "完善会员资料",
+    "name": "PostCenterChange_mobile"
+  },
+  {
+    "type": "post",
+    "url": "/center/change_name",
+    "title": "修改昵称",
+    "group": "完善会员资料",
+    "description": "<p>修改用户昵称</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "nick_name",
+            "description": "<p>昵称</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"用户昵称修改成功\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/center/change_name",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/center/change_name"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/UserSetController.php",
+    "groupTitle": "完善会员资料",
+    "name": "PostCenterChange_name"
+  },
+  {
+    "type": "post",
+    "url": "/center/change_password",
+    "title": "修改登陆密码",
+    "group": "完善会员资料",
+    "description": "<p>修改登陆密码</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "old_password",
+            "description": "<p>原密码</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "password",
+            "description": "<p>新密码(6-16位，字母，数字或下划线)</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "password_confirmation",
+            "description": "<p>确认密码</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"登陆密码修改成功\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/center/change_password",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/center/change_password"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/UserSetController.php",
+    "groupTitle": "完善会员资料",
+    "name": "PostCenterChange_password"
+  },
+  {
+    "type": "post",
+    "url": "/center/change_pay_password",
+    "title": "修改支付密码",
+    "group": "完善会员资料",
+    "description": "<p>修改用户支付密码</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "old_paypassword",
+            "description": "<p>原支付密码</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "paypassword",
+            "description": "<p>新支付密码(6-16位，字母，数字或下划线)</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "paypassword_confirmation",
+            "description": "<p>确认密码</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"支付密码修改成功\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/center/change_pay_password",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/center/change_pay_password"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/UserSetController.php",
+    "groupTitle": "完善会员资料",
+    "name": "PostCenterChange_pay_password"
   },
   {
     "type": "get",
@@ -1450,190 +2209,6 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/center/user_info",
-    "title": "用户信息",
-    "group": "用户中心",
-    "description": "<p>获取用户信息</p>",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "String",
-            "optional": false,
-            "field": "access-key",
-            "description": "<p>用户登陆认证token</p>"
-          }
-        ]
-      }
-    },
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "optional": false,
-            "field": "UserID",
-            "description": "<p>用户ID</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "status",
-            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "msg",
-            "description": "<p>返回状态说明信息</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Object",
-            "optional": false,
-            "field": "data",
-            "description": "<p>用户信息数据</p>"
-          }
-        ]
-      },
-      "examples": [
-        {
-          "title": "Success-Response:",
-          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": {\n             \"User_ID\": 17,  //用户ID\n             \"User_No\": 600017,  //用户编号\n             \"User_Mobile\": \"13274507043\",  //用户手机号\n             \"User_NickName\": null,  //用户昵称\n             \"User_Integral\": 20,  //用户当前积分\n             \"User_Money\": 1314,  //用户当前余额\n             \"User_Level\": 0,  //用户等级\n             \"User_HeadImg\": \"http://localhost:6001//uploadfiles/9nj50igwex/image/5b87a19025.png\",  //用户头像\n             \"Is_Distribute\": 0,  //是否是分销商（0:普通账户，1:分销账户）\n             \"User_CreateTime\": \"2018-10-15 10:53:54\",  //注册时间\n         },\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "examples": [
-      {
-        "title": "Example usage:",
-        "content": "curl -i http://localhost:6002/api/center/user_info",
-        "type": "curl"
-      }
-    ],
-    "sampleRequest": [
-      {
-        "url": "/api/center/user_info"
-      }
-    ],
-    "error": {
-      "examples": [
-        {
-          "title": "Error-Response:",
-          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "version": "0.0.0",
-    "filename": "app/Http/Controllers/Api/UserInfoController.php",
-    "groupTitle": "用户中心",
-    "name": "GetCenterUser_info"
-  },
-  {
-    "type": "post",
-    "url": "/center/upload_headimg",
-    "title": "上传用户头像",
-    "group": "用户中心",
-    "description": "<p>上传用户头像</p>",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "String",
-            "optional": false,
-            "field": "access-key",
-            "description": "<p>用户登陆认证token</p>"
-          }
-        ]
-      }
-    },
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "optional": false,
-            "field": "UserID",
-            "description": "<p>用户ID</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "up_head",
-            "description": "<p>上传图片元素名称</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "status",
-            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "msg",
-            "description": "<p>返回状态说明信息</p>"
-          }
-        ]
-      },
-      "examples": [
-        {
-          "title": "Success-Response:",
-          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"头像上传成功\",\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "examples": [
-      {
-        "title": "Example usage:",
-        "content": "curl -i http://localhost:6002/api/center/upload_headimg",
-        "type": "curl"
-      }
-    ],
-    "sampleRequest": [
-      {
-        "url": "/api/center/upload_headimg"
-      }
-    ],
-    "error": {
-      "examples": [
-        {
-          "title": "Error-Response:",
-          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "version": "0.0.0",
-    "filename": "app/Http/Controllers/Api/UserInfoController.php",
-    "groupTitle": "用户中心",
-    "name": "PostCenterUpload_headimg"
-  },
-  {
-    "type": "get",
     "url": "/check_sms",
     "title": "验证短信验证码",
     "group": "用户认证",
@@ -1857,6 +2432,99 @@ define({ "api": [
   },
   {
     "type": "post",
+    "url": "/forget_pwd",
+    "title": "忘记密码",
+    "group": "用户认证",
+    "description": "<p>忘记密码</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "mobile",
+            "description": "<p>手机号</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "code",
+            "description": "<p>短信验证码</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "User_Password",
+            "description": "<p>登陆密码(包括字母数字下划线)</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "User_Password_confirmation",
+            "description": "<p>确认登陆密码</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"密码重置成功\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/forget_pwd",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/forget_pwd"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"密码重置失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/AuthController.php",
+    "groupTitle": "用户认证",
+    "name": "PostForget_pwd"
+  },
+  {
+    "type": "post",
     "url": "/login",
     "title": "用户登陆",
     "group": "用户认证",
@@ -2004,7 +2672,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "password",
-            "description": "<p>密码</p>"
+            "description": "<p>密码（字母数字下划线，6-16位）</p>"
           },
           {
             "group": "Parameter",
@@ -2137,7 +2805,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": {\n                 \"is_sign\": 1,   //是否开启签到功能\n                 \"today_sign\": 0,   //今天是否已签到\n                 \"sign_num\": 0,   //签到总次数\n                 \"integral\": 20   //当前积分数\n         },\n}",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": {\n                 \"is_sign\": 1,   //是否开启签到功能\n                 \"today_sign\": 0,   //今天是否已签到\n                 \"sign_num\": 0,   //签到总次数\n                 \"integral\": 20   //当前积分数\n                 \"integral_rate\": 5   //积分充值比例1:5，即1元=5积分\n         },\n}",
           "type": "json"
         }
       ]
@@ -2167,72 +2835,6 @@ define({ "api": [
     "filename": "app/Http/Controllers/Api/IntegralController.php",
     "groupTitle": "积分",
     "name": "GetCenterIntegral_info"
-  },
-  {
-    "type": "get",
-    "url": "/center/integral_rate",
-    "title": "积分充值比例",
-    "group": "积分",
-    "description": "<p>获取积分充值比例设置信息</p>",
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "status",
-            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "msg",
-            "description": "<p>返回状态说明信息</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Object",
-            "optional": false,
-            "field": "data",
-            "description": "<p>用户信息数据</p>"
-          }
-        ]
-      },
-      "examples": [
-        {
-          "title": "Success-Response:",
-          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": 5   //积分充值比例1:5，即1元=5积分\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "examples": [
-      {
-        "title": "Example usage:",
-        "content": "curl -i http://localhost:6002/api/center/integral_rate",
-        "type": "curl"
-      }
-    ],
-    "sampleRequest": [
-      {
-        "url": "/api/center/integral_rate"
-      }
-    ],
-    "error": {
-      "examples": [
-        {
-          "title": "Error-Response:",
-          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"缺少必要的参数UserID\",\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "version": "0.0.0",
-    "filename": "app/Http/Controllers/Api/IntegralController.php",
-    "groupTitle": "积分",
-    "name": "GetCenterIntegral_rate"
   },
   {
     "type": "get",

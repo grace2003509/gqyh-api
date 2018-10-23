@@ -162,7 +162,7 @@ class AuthController extends Controller
      *
      * @apiParam {String} mobile        手机号
      * @apiParam {String} code          验证码
-     * @apiParam {String} password      密码
+     * @apiParam {String} password      密码（字母数字下划线，6-16位）
      * @apiParam {String} password_confirmation      确认密码
      * @apiParam {Number} [OwnerID]     推荐人ID
      *
@@ -196,7 +196,7 @@ class AuthController extends Controller
 
         $rules = [
             'mobile' => 'required|mobile|unique:user,User_Mobile',
-            'password' => 'required|confirmed|string|min:6|max:16',
+            'password' => 'required|confirmed|alpha_dash|min:6|max:16',
             'code' => 'required|string|size:4',
             'OwnerID' => 'nullable|exists:user,User_ID',
         ];
@@ -363,6 +363,67 @@ class AuthController extends Controller
         }
 
         return json_encode($data);
+    }
+
+
+    /**
+     * @api {post} /forget_pwd  忘记密码
+     * @apiGroup 用户认证
+     * @apiDescription 忘记密码
+     *
+     * @apiParam {String}   mobile          手机号
+     * @apiParam {String}   code            短信验证码
+     * @apiParam {String}   User_Password        登陆密码(包括字母数字下划线)
+     * @apiParam {String}   User_Password_confirmation       确认登陆密码
+     *
+     * @apiSuccess {Number} status      状态码（0:失败，1:成功, -1:需要重新登陆）
+     * @apiSuccess {String} msg         返回状态说明信息
+     *
+     * @apiExample {curl} Example usage:
+     *     curl -i http://localhost:6002/api/forget_pwd
+     *
+     * @apiSampleRequest /api/forget_pwd
+     *
+     * @apiErrorExample {json} Error-Response:
+     *     {
+     *          "status": "0",
+     *          "msg": "密码重置失败",
+     *     }
+     * @apiSuccessExample {json} Success-Response:
+     *     {
+     *          "status": "1",
+     *          "msg": "密码重置成功",
+     *     }
+     */
+    public function forget_pwd(Request $request)
+    {
+        $input = $request->input();
+
+        $rules = [
+            'mobile' => "required|exists:user,User_Mobile",
+            'code' => 'required|string|size:4',
+            'User_Password' => 'required|alpha_dash|min:6|max:16|confirmed',
+        ];
+        $validator = Validator::make($input, $rules);
+        if($validator->fails()){
+            $data = ['status' => 0, 'msg' => $validator->messages()->first()];
+            return json_encode($data);
+        }
+
+        $auth = new AuthController();
+        $user = new Member();
+        //验证短信验证码
+        $rst_json = $auth->checkSMS($request);
+        $rst = json_decode($rst_json, true);
+        if($rst['status'] == 1){
+            $password = md5($input['User_Password']);
+            $user->where('User_Mobile', $input['mobile'])->update(['User_Password' => $password]);
+
+            $data = ['status' => 1, 'msg' => '密码重置成功'];
+            return json_encode($data);
+        }else{
+            return json_encode($rst);
+        }
     }
 
 

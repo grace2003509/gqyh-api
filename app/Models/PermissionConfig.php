@@ -14,4 +14,6 @@ class PermissionConfig extends Model
         'Users_ID', 'Perm_Name', 'Perm_Picture', 'Perm_Url', 'Perm_Tyle', 'Perm_On', 'Is_Delete',
         'Create_Time', 'Perm_Field', 'Perm_index'
     ];
+
+    protected $hidden = ['Users_ID'];
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Dis_Account;
 use App\Models\Dis_Level;
 use App\Models\Member;
+use App\Models\PermissionConfig;
 use App\Models\ShopConfig;
 use App\Models\UploadFile;
 use App\Services\ImageThum;
@@ -16,7 +17,7 @@ class UserInfoController extends Controller
 {
     /**
      * @api {get} /center/user_info  用户信息
-     * @apiGroup 用户中心
+     * @apiGroup 会员中心
      * @apiDescription 获取用户信息
      *
      * @apiHeader {String} access-key   用户登陆认证token
@@ -101,10 +102,83 @@ class UserInfoController extends Controller
     }
 
 
+    /**
+     * @api {get} /center/menu_list  菜单列表
+     * @apiGroup 会员中心
+     * @apiDescription 获取会员中心菜单列表
+     *
+     * @apiHeader {String} access-key   用户登陆认证token
+     *
+     * @apiParam {Number}   UserID      用户ID
+     *
+     * @apiSuccess {Number} status      状态码（0:失败，1:成功, -1:需要重新登陆）
+     * @apiSuccess {String} msg         返回状态说明信息
+     * @apiSuccess {Object} data        用户信息数据
+     *
+     * @apiExample {curl} Example usage:
+     *     curl -i http://localhost:6002/api/center/menu_list
+     *
+     * @apiSampleRequest /api/center/menu_list
+     *
+     * @apiErrorExample {json} Error-Response:
+     *     {
+     *          "status": "0",
+     *          "msg": "失败",
+     *     }
+     * @apiSuccessExample {json} Success-Response:
+     *     {
+     *          "status": "1",
+     *          "msg": "成功",
+     *          "data": [
+     *              {
+     *                  "Perm_Name": "设置",   //菜单名称
+     *                  "Perm_Picture": "http://localhost:6001/uploadfiles/9nj50igwex/image/5b4042127f.png",  //图标
+     *                  "Perm_Url": "/api/shop/member/setting/"   //路径
+     *              },
+     *              {
+     *                  "Perm_Name": "退款/售后",
+     *                  "Perm_Picture": "http://localhost:6001/uploadfiles/9nj50igwex/image/5b404231c2.png",
+     *                  "Perm_Url": "/api/shop/member/backup/status/5/"
+     *              },
+     *          ]
+     *     }
+     */
+    public function menu_list(Request $request)
+    {
+        $input = $request->input();
+
+        $rules = [
+            'UserID' => 'required|exists:user,User_ID'
+        ];
+        $validator = Validator::make($input, $rules);
+        if($validator->fails()){
+            $data = ['status' => 0, 'msg' => $validator->messages()->first()];
+            return json_encode($data);
+        }
+
+        $pc_obj = new PermissionConfig();
+
+        $perm_config = $pc_obj->select('Perm_Name', 'Perm_Picture', 'Perm_Url')
+            ->where('Perm_Tyle', 2)
+            ->where('Is_Delete', 0)
+            ->orderByDesc('Perm_Index')
+            ->get();
+        foreach($perm_config as $key => $value){
+            $value['Perm_Picture'] = ADMIN_BASE_HOST.$value['Perm_Picture'];
+        }
+
+        $data = [
+            'status' => 1,
+            'msg' => '获取菜单列表成功',
+            'data' => $perm_config,
+        ];
+        return json_encode($data);
+    }
+
 
     /**
      * @api {post} /center/upload_headimg  上传用户头像
-     * @apiGroup 用户中心
+     * @apiGroup 会员中心
      * @apiDescription 上传用户头像
      *
      * @apiHeader {String} access-key   用户登陆认证token

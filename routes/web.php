@@ -19,6 +19,7 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function ($route){
     //登陆
     $route->post('/login', 'AuthController@login');
     $route->post('/register', 'AuthController@register');
+    $route->post('/forget_pwd', 'AuthController@forget_pwd');
     $route->get('/logout', 'AuthController@logout');
     $route->get('/send_sms', 'AuthController@sendSMS');//发送短信验证码
     $route->get('/check_sms', 'AuthController@checkSMS');//验证短信验证码
@@ -27,6 +28,7 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function ($route){
     $route->group(['prefix' => 'center', 'middleware' => ['check_auth']], function ($api) {
         //用户信息
         $api->get('/user_info', 'UserInfoController@user_info');
+        $api->get('/menu_list', 'UserInfoController@menu_list');
         $api->post('/upload_headimg', 'UserInfoController@upload_headimg');
         //系统消息
         $api->get('/sys_message_num', 'MessageController@sys_message_num');
@@ -63,10 +65,15 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function ($route){
         $api->get('backorder_list', 'BackOrderController@index');
         $api->get('backorder_detail', 'BackOrderController@show');
         $api->post('backorder_send', 'BackOrderController@send');
-
+        //完善会员资料
+        $api->post('/change_mobile', 'UserSetController@change_mobile');
+        $api->post('/change_password', 'UserSetController@change_password');
+        $api->post('/change_pay_password', 'UserSetController@change_pay_password');
+        $api->post('/change_name', 'UserSetController@change_name');
     });
 
     $route->get('/center/integral_rate', 'IntegralController@get_integral_rate');  //积分充值比例
+    $route->get('/center/area_list', 'AddressController@get_area_list');  //省市区列表
 
 });
 
