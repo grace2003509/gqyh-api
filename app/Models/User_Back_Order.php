@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class User_Back_Order extends Model
 {
     protected $table = 'user_back_order';
-    protected $primaryKey = 'Shipping_ID';
+    protected $primaryKey = 'Back_ID';
     public $timestamps = false;
 
     protected $fillable = [
@@ -17,9 +17,17 @@ class User_Back_Order extends Model
         'Sales_By','DistributeAccount_ID','Pro_skuvaljosn','batch_no','Back_Integral','Back_Amount_Source','Back_Coin'
     ];
 
+    protected $hidden = ['Users_ID'];
+
     //退货单所属的订单
     public function order()
     {
         return $this->belongsTo(UserOrder::class, 'Order_ID', 'Order_ID');
+    }
+
+
+    public function details()
+    {
+        return $this->hasMany(User_Back_Order_Detail::class, 'backid', 'Back_ID');
     }
 }

@@ -123,7 +123,7 @@ class ServiceBackOrder
 
         $time = time();
         $data = array(
-            'Back_SN' => $this->build_order_no(),
+            'Back_Sn' => $this->build_order_no(),
             'Users_ID'=>USERSID,
             'Biz_ID'=>$rsOrder["Biz_ID"],
             'Order_ID'=>$orderid,

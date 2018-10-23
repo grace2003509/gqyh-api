@@ -61,6 +61,8 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function ($route){
         //退款单
         $api->post('/order_apply_back', 'BackOrderController@apply_back');
         $api->get('backorder_list', 'BackOrderController@index');
+        $api->get('backorder_detail', 'BackOrderController@show');
+        $api->post('backorder_send', 'BackOrderController@send');
 
     });
 

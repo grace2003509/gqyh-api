@@ -3058,6 +3058,105 @@ define({ "api": [
   },
   {
     "type": "get",
+    "url": "/center/backorder_detail",
+    "title": "退款单详情",
+    "group": "退款、售后",
+    "description": "<p>获取用户退款单详情</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "BackID",
+            "description": "<p>退款单ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>退款单详情数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": {\n          \"Back_ID\": 2,   //退款单ID\n          \"Back_Sn\": \"\",  //退款单编号\n          \"ProductID\": 11,   //商品ID\n          \"User_ID\": 18,  //用户ID\n          \"Back_Json\":\n                {\n                    \"ProductsName\": \"宝贝营养品\",   //商品名称\n                    \"ImgPath\": \"/uploadfiles/biz/2/image/5b188c7412.jpg\",   //商品图片\n                    \"ProductsPriceX\": \"38.00\",   //现价\n                    \"ProductsPriceY\": \"188.00\",   //原价\n                    \"Products_PriceS\": \"0.00\",\n                    \"ProductsPriceA\": 0,\n                    \"ProductsPriceAmax\": 0,\n                    \"Products_PayCoin\": \"0\",\n                    \"Products_Integration\": \"0\",\n                    \"user_curagio\": 0,\n                    \"Productsattrstrval\": \"\",\n                    \"Productsattrkeystrval\": [],\n                    \"ProductsWeight\": \"2.00\",   //重量\n                    \"Products_IsPaysBalance\": \"1\",\n                    \"Products_Shipping\": null,\n                    \"Products_Business\": null,\n                    \"Shipping_Free_Company\": \"0\",\n                    \"IsShippingFree\": \"0\",\n                    \"OwnerID\": \"3\",\n                    \"ProductsIsShipping\": \"0\",\n                    \"Qty\": \"1\",  //商品数量\n                    \"Products_FinanceType\": \"0\",\n                    \"Products_FinanceRate\": \"100.00\",\n                    \"Biz_FinanceType\": 0,\n                    \"Biz_FinanceRate\": \"100.00\",\n                    \"Property\": [], //商品属性（shu_pricesimp:属性价格，shu_value:商品属性值）\n                    \"platForm_Income_Reward\": \"100\",\n                    \"web_prie_shop\": 38,\n                    \"ProductsProfit\": 38\n                },\n          \"Back_Status\": 0,\n          \"Back_Qty\": 1,   //退货数量\n          \"Back_Amount\": \"38.00\",   //退款金额\n          \"Back_Account\": \"sgeges\",     //退款账户\n          \"status\": \"申请中\"   //退款单状态\n          \"Back_Shipping\": \"dfs\"   //物流方式\n          \"Back_ShippingID\": \"sf2146544798\"   //物流单号\n          \"Back_CreateTime\": \"2018-10-22 17:35:06\"   //退款单创建时间\n          \"ImgPath\": \"http://localhost:6001/uploadfiles/biz/2/image/5b188c7412.jpg\"   //处理后的商品图片路径\n          \"recieve_info\": {  //商家收货信息\n                     \"RecieveProvince\": \"内蒙古\",  //省\n                     \"RecieveCity\": \"呼和浩特\",  //市\n                     \"RecieveArea\": \"中山区\", //区\n                     \"RecieveAddress\": \"sgesg\",  //详细地址\n                     \"RecieveName\": \"dfsf\",  //收货人\n                     \"RecieveMobile\": \"122656\"   //收货电话\n                 },\n          \"details\": [   //操作记录\n             {\n                 \"itemid\": 1,\n                 \"backid\": 2,\n                 \"detail\": \"买家申请退款，退款金额：38.00，退款原因：sgegse\",  //描述\n                 \"status\": 0,\n                 \"createtime\": \"2018-10-22 17:35:06\"  //操作时间\n             },\n             {\n                 \"itemid\": 2,\n                 \"backid\": 2,\n                 \"detail\": \"买家已发货，物流方式：dfs，物流单号：sf2146544798\",\n                 \"status\": 1,\n                 \"createtime\": \"2018-10-23 10:25:56\"\n             }\n          ]\n      },\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/center/backorder_detail",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/center/backorder_detail"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"缺少必要的参数UserID\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/BackOrderController.php",
+    "groupTitle": "退款、售后",
+    "name": "GetCenterBackorder_detail"
+  },
+  {
+    "type": "get",
     "url": "/center/backorder_list",
     "title": "我的退款单",
     "group": "退款、售后",
@@ -3118,7 +3217,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>用户信息数据</p>"
+            "description": "<p>退款单列表数据</p>"
           }
         ]
       },
@@ -3155,6 +3254,112 @@ define({ "api": [
     "filename": "app/Http/Controllers/Api/BackOrderController.php",
     "groupTitle": "退款、售后",
     "name": "GetCenterBackorder_list"
+  },
+  {
+    "type": "post",
+    "url": "/center/backorder_send",
+    "title": "买家发货",
+    "group": "退款、售后",
+    "description": "<p>买家发货</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "BackID",
+            "description": "<p>订单ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "Shipping",
+            "description": "<p>物流方式</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "ShippingID",
+            "description": "<p>物流单号</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"发货成功\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/center/backorder_send",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/center/backorder_send"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": '只有“卖家同意状态下的退货单才可发货操作”',\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/BackOrderController.php",
+    "groupTitle": "退款、售后",
+    "name": "PostCenterBackorder_send"
   },
   {
     "type": "post",
@@ -3216,14 +3421,14 @@ define({ "api": [
           },
           {
             "group": "Parameter",
-            "type": "Number",
+            "type": "String",
             "optional": false,
             "field": "Reason",
             "description": "<p>退货原因</p>"
           },
           {
             "group": "Parameter",
-            "type": "Number",
+            "type": "String",
             "optional": false,
             "field": "Account",
             "description": "<p>退款账号和户名</p>"

@@ -139,7 +139,7 @@ class ServiceOrder
                     "Back_ShippingID"=>$arr[1],
                     "Back_UpdateTime"=>time()
                 );
-                $uo_obj->where('Order_ID', $backinfo['Order_ID'])->update($Data);
+                $ubo_obj->where('Back_ID', $backinfo['Back_ID'])->update($Data);
                 break;
             case 'seller_recieve':
                 $arr = explode("||%$%",$reason);
