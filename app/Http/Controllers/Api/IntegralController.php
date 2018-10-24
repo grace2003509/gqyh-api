@@ -11,11 +11,14 @@ use App\Models\User_Message;
 use App\Models\UserCharge;
 use App\Models\UserIntegralRecord;
 use App\Models\UserMoneyRecord;
+use App\Models\UsersConfig;
 use App\Models\UsersPayConfig;
+use App\Services\ServiceWeixinPay;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Yansongda\Pay\Pay;
 
 class IntegralController extends Controller
 {
@@ -71,7 +74,7 @@ class IntegralController extends Controller
             'UserID.exists' => '此用户不存在',
         ];
         $validator = Validator::make($input, $rules, $message);
-        if($validator->fails()){
+        if ($validator->fails()) {
             $data = ['status' => 0, 'msg' => $validator->messages()->first()];
             return json_encode($data);
         }
@@ -87,13 +90,13 @@ class IntegralController extends Controller
         $sign = $uir_obj->where('Record_Type', 0)->where('User_ID', $input['UserID'])->get();
         $is_sign = $rsConfig['IsSign'];
         $sign_num = count($sign);
-        if(isset($sign[$sign_num-1]) > 0 && $sign[$sign_num-1]['Record_CreateTime'] > strtotime(date("Y-m-d 00:00:00"))){
+        if (isset($sign[$sign_num - 1]) > 0 && $sign[$sign_num - 1]['Record_CreateTime'] > strtotime(date("Y-m-d 00:00:00"))) {
             $today_sign = 1;
-        }else{
+        } else {
             $today_sign = 0;
         }
         $rsConfig = $sc_obj->select('moneytoscore')->find(USERSID);
-        $rsPay = $upc_obj->select('PaymentWxpayEnabled','Payment_AlipayEnabled')->find(USERSID);
+        $rsPay = $upc_obj->select('PaymentWxpayEnabled', 'Payment_AlipayEnabled')->find(USERSID);
 
         $data = [
             'status' => 1,
@@ -177,7 +180,7 @@ class IntegralController extends Controller
             'UserID.exists' => '此用户不存在',
         ];
         $validator = Validator::make($input, $rules, $message);
-        if($validator->fails()){
+        if ($validator->fails()) {
             $data = ['status' => 0, 'msg' => $validator->messages()->first()];
             return json_encode($data);
         }
@@ -187,7 +190,7 @@ class IntegralController extends Controller
         $lists = $uir_obj->where('User_ID', $input['UserID'])
             ->orderByDesc('Record_ID')
             ->paginate(20, ['*'], $cur_page);
-        foreach($lists as $key => $value){
+        foreach ($lists as $key => $value) {
             $value['Record_CreateTime'] = date("Y-m-d H:i:s", $value['Record_CreateTime']);
         }
 
@@ -195,7 +198,6 @@ class IntegralController extends Controller
         return json_encode($data);
 
     }
-
 
 
     /**
@@ -240,7 +242,7 @@ class IntegralController extends Controller
             'UserID.exists' => '此用户不存在',
         ];
         $validator = Validator::make($input, $rules, $message);
-        if($validator->fails()){
+        if ($validator->fails()) {
             $data = ['status' => 0, 'msg' => $validator->messages()->first()];
             return json_encode($data);
         }
@@ -349,7 +351,7 @@ class IntegralController extends Controller
             'pay_password.required' => '支付密码不能为空',
         ];
         $validator = Validator::make($input, $rules, $message);
-        if($validator->fails()){
+        if ($validator->fails()) {
             $data = ['status' => 0, 'msg' => $validator->messages()->first()];
             return json_encode($data);
         }
@@ -396,7 +398,7 @@ class IntegralController extends Controller
             'Record_SurplusIntegral' => $rsUser['User_Integral'],
             'Operator_UserName' => '',
             'Record_Type' => 6,
-            'Record_Description' => '转赠给会员'.$reciever['User_Mobile'].'积分',
+            'Record_Description' => '转赠给会员' . $reciever['User_Mobile'] . '积分',
             'Record_CreateTime' => time(),
             'Users_ID' => USERSID,
             'User_ID' => $input['UserID']
@@ -409,7 +411,7 @@ class IntegralController extends Controller
             'Record_SurplusIntegral' => $reciever['User_Integral'] + $amount,
             'Operator_UserName' => '',
             'Record_Type' => 6,
-            'Record_Description' => '会员'.$rsUser['User_Mobile'].'转赠积分',
+            'Record_Description' => '会员' . $rsUser['User_Mobile'] . '转赠积分',
             'Record_CreateTime' => time(),
             'Users_ID' => USERSID,
             'User_ID' => $reciever['User_ID']
@@ -473,9 +475,10 @@ class IntegralController extends Controller
             'Operator' => 'required|integer|in:1,2,3',
             'PayAmount' => 'required|integer|min:1',
             'PayPassword' => 'required_if:Operator,3',
+//            'Openid' => 'required_if:Operator,1',
         ];
         $validator = Validator::make($input, $rules);
-        if($validator->fails()){
+        if ($validator->fails()) {
             $data = ['status' => 0, 'msg' => $validator->messages()->first()];
             return json_encode($data);
         }
@@ -501,17 +504,23 @@ class IntegralController extends Controller
         $uc_obj = new UserCharge();
         $charge = $uc_obj->create($charge_data);
 
-        if($charge){
-            if($input['Operator'] == 1){
-                $data = $this->wx_pay($input['PayAmount'], $rsUser, $input['PayPassword'],$charge['Item_ID']);
-            }elseif($input['Operator'] == 2){
-                $data = $this->ali_pay($input['PayAmount'], $rsUser, $input['PayPassword'],$charge['Item_ID']);
-            }elseif($input['Operator'] == 3){
-                $data = $this->balance_pay($input['PayAmount'], $rsUser, $input['PayPassword'],$charge['Item_ID']);
-            }else{
-                $data = ['status' => 0, 'msg' => '充值方式不存在'];
+        if ($charge) {
+            $data = ['status' => 1, 'msg' => '充值成功'];
+
+            if ($input['Operator'] == 1) {
+
+                $data = $this->wx_pay($input['PayAmount'], $rsUser['User_ID'], $charge['Item_ID']);
+
+            } elseif ($input['Operator'] == 2) {
+
+                $data = $this->ali_pay($input['PayAmount'], $rsUser, $input['PayPassword'], $charge['Item_ID']);
+
+            } elseif ($input['Operator'] == 3) {
+
+                $data = $this->balance_pay($input['PayAmount'], $rsUser, $input['PayPassword'], $charge['Item_ID']);
+
             }
-        }else{
+        } else {
             $data = ['status' => 0, 'msg' => '积分充值失败'];
         }
 
@@ -521,17 +530,17 @@ class IntegralController extends Controller
     //余额充值积分，相关处理
     private function balance_pay($amount, $rsUser, $pay_password, $ItemID)
     {
-        if($amount > $rsUser['User_Money']){
+        if ($amount > $rsUser['User_Money']) {
             $data = ['status' => 0, 'msg' => '您的余额不足，请先充值余额'];
             return $data;
         }
-        if(md5($pay_password) != $rsUser['User_PayPassword']){
+        if (md5($pay_password) != $rsUser['User_PayPassword']) {
             $data = ['status' => 0, 'msg' => '支付密码不正确，请重新输入'];
             return $data;
         }
 
         $sc_obj = new ShopConfig();
-        $rsConfig=$sc_obj->select('moneytoscore','Shop_Resale_Reward_Json')->find(USERSID);
+        $rsConfig = $sc_obj->select('moneytoscore', 'Shop_Resale_Reward_Json')->find(USERSID);
         $integral = intval($amount * $rsConfig['moneytoscore']);
         try {
             DB::beginTransaction();
@@ -546,7 +555,7 @@ class IntegralController extends Controller
                 'Type' => 5,//使用余额充值积分
                 'Amount' => $amount,
                 'Total' => $rsUser['User_Money'],
-                'Note' => "使用余额充值积分-".number_format($amount,2,".",""),
+                'Note' => "使用余额充值积分-" . number_format($amount, 2, ".", ""),
                 'CreateTime' => time()
             );
             $umr_obj = new UserMoneyRecord();
@@ -567,10 +576,10 @@ class IntegralController extends Controller
 
             //重消奖
             if (!empty($rsConfig['Shop_Resale_Reward_Json'])) {
-                $this->resale_bonus($rsConfig['Shop_Resale_Reward_Json'], $rsUser,$amount,$ItemID);
+                $this->resale_bonus($rsConfig['Shop_Resale_Reward_Json'], $rsUser, $amount, $ItemID);
             }
 
-            if($user_flag && $money_record && $record_flag){
+            if ($user_flag && $money_record && $record_flag) {
                 DB::commit();
                 $data = ['status' => 1, 'msg' => '执行成功'];
             } else {
@@ -588,8 +597,26 @@ class IntegralController extends Controller
     /**
      * 微信充值积分，相关处理
      */
-    private function wx_pay($amount, $rsUser, $pay_password, $ItemID)
+    private function wx_pay($amount, $UserID, $ItemID, $openid = '')
     {
+        $wxp_obj = new ServiceWeixinPay();
+
+        $notify_url = $_SERVER['HTTP_HOST'] . "/api/center/integral_notify/{$ItemID}";
+        $config = $wxp_obj->config($notify_url);
+        if(isset($config['status']) && $config['status'] == 0){
+            return $config;
+        }
+        $pay_subject = "(会员:" . $UserID . ")在线充值积分，充值编号:" . $ItemID;
+        $config_biz = [
+            'out_trade_no' => time() . strval($ItemID),
+            'total_fee' => strval(floatval($amount) * 100), // **单位：分**
+            'body' => $pay_subject,
+            'spbill_create_ip' => $_SERVER['REMOTE_ADDR'],
+//            'openid' => $openid,
+        ];
+
+        $pay = new Pay($config);
+        return $pay->driver('wechat')->gateway('mp')->pay($config_biz);
 
     }
 
@@ -599,25 +626,87 @@ class IntegralController extends Controller
      */
     private function ali_pay($amount, $rsUser, $pay_password, $ItemID)
     {
+        // todo
+    }
 
+
+    public function integral_notify(Request $request,$itemid)
+    {
+        $wxp_obj = new ServiceWeixinPay();
+        $notify_url = $_SERVER['HTTP_HOST'] . "/api/center/integral_notify/{$itemid}";
+        $config = $wxp_obj->config($notify_url);
+        $pay = new Pay($config);
+        $verify = $pay->driver('wechat')->gateway('mp')->verify($request->getContent());
+
+        if ($verify) {
+            $uc_obj = new UserCharge();
+            $m_obj = new Member();
+            $rsCharge = $uc_obj->select('User_ID')->find($itemid);
+            $rsUser = $m_obj->find($rsCharge['User_ID']);
+            $amount = $verify['total_fee'];
+
+            $sc_obj = new ShopConfig();
+            $rsConfig = $sc_obj->select('moneytoscore', 'Shop_Resale_Reward_Json')->find(USERSID);
+            $integral = intval($amount * $rsConfig['moneytoscore']);
+            try {
+                DB::beginTransaction();
+                //修改用户积分
+                $rsUser['User_Integral'] += $integral;
+                $user_flag = $rsUser->save();
+
+                //生成积分充值记录
+                $integral_record_data = array(
+                    'Record_Integral' => $integral,
+                    'Record_SurplusIntegral' => $rsUser['User_Integral'],
+                    'Operator_UserName' => '',
+                    'Record_Type' => 5,
+                    'Record_Description' => '使用余额充值积分',
+                    'Record_CreateTime' => time(),
+                    'Users_ID' => USERSID,
+                    'User_ID' => $rsUser['User_ID']
+                );
+                $uir_obj = new UserIntegralRecord();
+                $record_flag = $uir_obj->create($integral_record_data);
+
+                //重消奖
+                if (!empty($rsConfig['Shop_Resale_Reward_Json'])) {
+                    $this->resale_bonus($rsConfig['Shop_Resale_Reward_Json'], $rsUser, $amount, $itemid);
+                }
+
+                if ($user_flag && $record_flag) {
+                    DB::commit();
+                    $data = ['status' => 1, 'msg' => '执行成功', 'data' => $verify];
+                } else {
+                    DB::rollBack();
+                    $data = ['status' => 0, 'msg' => '执行失败'];
+                }
+            } catch (\Exception $e) {
+                $data = ['status' => 0, 'msg' => $e->getMessage()];
+            }
+        } else {
+            $data = ['status' => 0, 'msg' => '执行失败'];
+            file_put_contents(storage_path('notify.txt'), "收到异步通知\r\n", FILE_APPEND);
+        }
+
+        return json_encode($data);
     }
 
 
     /**
      * 重消奖
      */
-    private function resale_bonus($resale_json,$rsUser,$amount,$ItemID)
+    private function resale_bonus($resale_json, $rsUser, $amount, $ItemID)
     {
         $resale_config = json_decode($resale_json, true);
         //写入重消奖记录开始
         $da_obj = new Dis_Account();
 
         //new 获取所有上级分销商
-        if($rsUser['Owner_Id'] > 0){
+        if ($rsUser['Owner_Id'] > 0) {
             $ids_str = $da_obj->getUserAncestorIds($rsUser['Owner_Id']);
-            $ance_id = explode(',',$ids_str);
-            $ance_id = array_slice($ance_id, 0,count($ance_id)-1);
-        }else{
+            $ance_id = explode(',', $ids_str);
+            $ance_id = array_slice($ance_id, 0, count($ance_id) - 1);
+        } else {
             $ance_id = [];
         }
 
@@ -648,7 +737,7 @@ class IntegralController extends Controller
 
             $from_money += $money;
             //循环给分销商写入可提现佣金
-            $dis_update_flag =  $da_obj->where('User_ID', $v)->increment('balance', $money);
+            $dis_update_flag = $da_obj->where('User_ID', $v)->increment('balance', $money);
             if (false !== $dis_update_flag) {
                 $dis_from++;
             }
@@ -658,11 +747,11 @@ class IntegralController extends Controller
 
             //循环发送得奖消息
             $message_data = array(
-                "Message_Title"=>'恭喜您获取重消奖'.$money.'元',
-                "Message_Description"=>'下级有会员充值积分,您获取重消奖'.$money.'元',
-                "Message_CreateTime"=>time(),
-                "Users_ID"=>USERSID,
-                "User_ID"=>$v
+                "Message_Title" => '恭喜您获取重消奖' . $money . '元',
+                "Message_Description" => '下级有会员充值积分,您获取重消奖' . $money . '元',
+                "Message_CreateTime" => time(),
+                "Users_ID" => USERSID,
+                "User_ID" => $v
             );
             $um_obj = new User_Message();
             $um_obj->create($message_data);
