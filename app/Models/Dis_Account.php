@@ -411,7 +411,7 @@ class Dis_Account extends Model {
      */
     public function getUserAncestorIds($owner_id, $ids = '', $level = 0)
     {
-        $user = Member::select('Users_ID','Owner_Id', 'User_ID', 'User_Level')->find($owner_id);
+        $user = Member::select('Owner_Id', 'User_ID', 'User_Level')->find($owner_id);
         //只识别vip会员和总代
         $ids = '';
         if(@$user->disAccount->status == 1 && @$user->disAccount->Level_ID >= 2) {

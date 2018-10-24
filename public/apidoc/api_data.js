@@ -2805,7 +2805,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": {\n                 \"is_sign\": 1,   //是否开启签到功能\n                 \"today_sign\": 0,   //今天是否已签到\n                 \"sign_num\": 0,   //签到总次数\n                 \"integral\": 20   //当前积分数\n                 \"integral_rate\": 5   //积分充值比例1:5，即1元=5积分\n         },\n}",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": {\n                 \"is_sign\": 1,   //是否开启签到功能\n                 \"today_sign\": 0,   //今天是否已签到\n                 \"sign_num\": 0,   //签到总次数\n                 \"integral\": 20   //当前积分数\n                 \"integral_rate\": 5   //积分充值比例1:5，即1元=5积分\n                 \"integral_payment\": {\n                     \"PaymentWxpayEnabled\": 1,  //是否启用微信支付（1:是，0:否）\n                     \"Payment_AlipayEnabled\": 0    //是否启用支付宝支付（1:是，0:否）\n                  }\n             },\n}",
           "type": "json"
         }
       ]
@@ -3027,6 +3027,119 @@ define({ "api": [
     "filename": "app/Http/Controllers/Api/IntegralController.php",
     "groupTitle": "积分",
     "name": "PostCenterDo_sign"
+  },
+  {
+    "type": "post",
+    "url": "/center/integral_charge",
+    "title": "积分充值",
+    "group": "积分",
+    "description": "<p>用户充值积分</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "Operator",
+            "description": "<p>支付方式（1:微支付，2:支付宝，3:余额支付）</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "PayAmount",
+            "description": "<p>支付金额（整数，最小值为1）</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "PayPassword",
+            "description": "<p>用户支付密码(余额支付时必填)</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>用户信息数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/center/integral_charge",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/center/integral_charge"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"缺少必要的参数UserID\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/IntegralController.php",
+    "groupTitle": "积分",
+    "name": "PostCenterIntegral_charge"
   },
   {
     "type": "post",

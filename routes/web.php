@@ -45,6 +45,7 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function ($route){
         $api->get('/integral_record', 'IntegralController@integral_record');
         $api->post('/do_sign', 'IntegralController@do_sign');
         $api->post('/integral_largess', 'IntegralController@integral_largess');
+        $api->post('/integral_charge', 'IntegralController@integral_charge');
         //余额
         $api->get('/charge_record', 'MoneyController@charge_record');
         $api->get('/money_record', 'MoneyController@money_record');

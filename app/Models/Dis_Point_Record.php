@@ -10,6 +10,12 @@ class Dis_Point_Record extends Model
     protected $table = "distribute_point_record";
     public $timestamps = false;
 
+    protected $fillable = [
+        'Users_ID','User_ID','type','orderid','money','status','descr','created_at'
+    ];
+
+    protected $hidden = ['Users_ID'];
+
     /**
      * 记录所属得奖人
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
