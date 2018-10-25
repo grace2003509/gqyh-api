@@ -46,10 +46,16 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function ($route){
         $api->post('/do_sign', 'IntegralController@do_sign');
         $api->post('/integral_largess', 'IntegralController@integral_largess');
         $api->post('/integral_charge', 'IntegralController@integral_charge');
-        $api->get('/integral_notify/{itemid}', 'IntegralController@integral_notify');
+        $api->get('/integral_wx_notify/{itemid}', 'IntegralController@integral_wx_notify');
+        $api->get('/integral_ali_notify/{itemid}', 'IntegralController@integral_ali_notify');
+        $api->get('/integral_ali_return/{itemid}', 'IntegralController@integral_ali_return');
         //余额
         $api->get('/charge_record', 'MoneyController@charge_record');
         $api->get('/money_record', 'MoneyController@money_record');
+        $api->post('/money_charge', 'MoneyController@money_charge');
+        $api->get('/money_wx_notify/{itemid}', 'MoneyController@money_wx_notify');
+        $api->get('/money_ali_notify/{itemid}', 'MoneyController@money_ali_notify');
+        $api->get('/money_ali_return/{itemid}', 'MoneyController@money_ali_return');
         //优惠券
         $api->get('/my_coupon', 'CouponController@my_coupon');
         $api->get('/coupon_list', 'CouponController@coupon_list');

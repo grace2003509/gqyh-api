@@ -13,7 +13,7 @@ use App\Models\UserIntegralRecord;
 use App\Models\UserMoneyRecord;
 use App\Models\UsersConfig;
 use App\Models\UsersPayConfig;
-use App\Services\ServiceWeixinPay;
+use App\Services\ServicePay;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
@@ -490,6 +490,8 @@ class IntegralController extends Controller
         );
 
         $m_obj = new Member();
+        $pay = new ServicePay();
+
         $rsUser = $m_obj->find($input['UserID']);
 
         $charge_data = array(
@@ -506,14 +508,14 @@ class IntegralController extends Controller
 
         if ($charge) {
             $data = ['status' => 1, 'msg' => '充值成功'];
-
+            $pay_subject = "(会员:" . $charge['User_ID'] . ")在线充值积分，充值编号:" . $charge['Item_ID'];
             if ($input['Operator'] == 1) {
 
-                $data = $this->wx_pay($input['PayAmount'], $rsUser['User_ID'], $charge['Item_ID']);
+                $data = $pay->wx_pay($input['PayAmount'], $charge['Item_ID'], 2, $pay_subject);
 
             } elseif ($input['Operator'] == 2) {
 
-                $data = $this->ali_pay($input['PayAmount'], $rsUser, $input['PayPassword'], $charge['Item_ID']);
+                $data = $pay->ali_pay($input['PayAmount'], $rsUser['User_ID'], $charge['Item_ID'], 2, $pay_subject);
 
             } elseif ($input['Operator'] == 3) {
 
@@ -593,48 +595,88 @@ class IntegralController extends Controller
         return $data;
     }
 
-
-    /**
-     * 微信充值积分，相关处理
-     */
-    private function wx_pay($amount, $UserID, $ItemID, $openid = '')
+    //支付宝同步回调
+    public function integral_ali_return(Request $request,$itemid)
     {
-        $wxp_obj = new ServiceWeixinPay();
-
-        $notify_url = $_SERVER['HTTP_HOST'] . "/api/center/integral_notify/{$ItemID}";
-        $config = $wxp_obj->config($notify_url);
-        if(isset($config['status']) && $config['status'] == 0){
-            return $config;
-        }
-        $pay_subject = "(会员:" . $UserID . ")在线充值积分，充值编号:" . $ItemID;
-        $config_biz = [
-            'out_trade_no' => time() . strval($ItemID),
-            'total_fee' => strval(floatval($amount) * 100), // **单位：分**
-            'body' => $pay_subject,
-            'spbill_create_ip' => $_SERVER['REMOTE_ADDR'],
-//            'openid' => $openid,
-        ];
-
+        $wxp_obj = new ServicePay();
+        $notify_url = $_SERVER['HTTP_HOST'] . "/api/center/integral_ali_notify/{$itemid}";
+        $return_url = $_SERVER['HTTP_HOST'] . "/api/center/integral_ali_return/{$itemid}";
+        $config = $wxp_obj->ali_config($notify_url,$return_url);
         $pay = new Pay($config);
-        return $pay->driver('wechat')->gateway('mp')->pay($config_biz);
+        $verify = $pay->driver('alipay')->gateway()->verify($request->all());
 
+        return $verify;
     }
 
-
-    /**
-     * 支付宝充值积分，相关处理
-     */
-    private function ali_pay($amount, $rsUser, $pay_password, $ItemID)
+    //支付宝异步回调
+    public function integral_ali_notify(Request $request,$itemid)
     {
-        // todo
+        $wxp_obj = new ServicePay();
+        $notify_url = $_SERVER['HTTP_HOST'] . "/api/center/integral_ali_notify/{$itemid}";
+        $return_url = $_SERVER['HTTP_HOST'] . "/api/center/integral_ali_return/{$itemid}";
+        $config = $wxp_obj->ali_config($notify_url,$return_url);
+        $pay = new Pay($config);
+        $verify = $pay->driver('alipay')->gateway()->verify($request->all());
+
+        if ($verify) {
+            $uc_obj = new UserCharge();
+            $m_obj = new Member();
+            $rsCharge = $uc_obj->select('User_ID')->find($itemid);
+            $rsUser = $m_obj->find($rsCharge['User_ID']);
+            $amount = $verify['total_fee'];
+
+            $sc_obj = new ShopConfig();
+            $rsConfig = $sc_obj->select('moneytoscore', 'Shop_Resale_Reward_Json')->find(USERSID);
+            $integral = intval($amount * $rsConfig['moneytoscore']);
+            try {
+                DB::beginTransaction();
+                //修改用户积分
+                $rsUser['User_Integral'] += $integral;
+                $user_flag = $rsUser->save();
+
+                //生成积分充值记录
+                $integral_record_data = array(
+                    'Record_Integral' => $integral,
+                    'Record_SurplusIntegral' => $rsUser['User_Integral'],
+                    'Operator_UserName' => '',
+                    'Record_Type' => 5,
+                    'Record_Description' => '使用余额充值积分',
+                    'Record_CreateTime' => time(),
+                    'Users_ID' => USERSID,
+                    'User_ID' => $rsUser['User_ID']
+                );
+                $uir_obj = new UserIntegralRecord();
+                $record_flag = $uir_obj->create($integral_record_data);
+
+                //重消奖
+                if (!empty($rsConfig['Shop_Resale_Reward_Json'])) {
+                    $this->resale_bonus($rsConfig['Shop_Resale_Reward_Json'], $rsUser, $amount, $itemid);
+                }
+
+                if ($user_flag && $record_flag) {
+                    DB::commit();
+                    $data = ['status' => 1, 'msg' => '执行成功', 'data' => $verify];
+                } else {
+                    DB::rollBack();
+                    $data = ['status' => 0, 'msg' => '执行失败'];
+                }
+            } catch (\Exception $e) {
+                $data = ['status' => 0, 'msg' => $e->getMessage()];
+            }
+        } else {
+            $data = ['status' => 0, 'msg' => '执行失败'];
+//            file_put_contents(storage_path('notify.txt'), "收到异步通知\r\n", FILE_APPEND);
+        }
+
+        return json_encode($data);
     }
 
-
-    public function integral_notify(Request $request,$itemid)
+    //微信回调
+    public function integral_wx_notify(Request $request,$itemid)
     {
-        $wxp_obj = new ServiceWeixinPay();
-        $notify_url = $_SERVER['HTTP_HOST'] . "/api/center/integral_notify/{$itemid}";
-        $config = $wxp_obj->config($notify_url);
+        $wxp_obj = new ServicePay();
+        $notify_url = $_SERVER['HTTP_HOST'] . "/api/center/integral_wx_notify/{$itemid}";
+        $config = $wxp_obj->wx_config($notify_url);
         $pay = new Pay($config);
         $verify = $pay->driver('wechat')->gateway('mp')->verify($request->getContent());
 
@@ -685,7 +727,7 @@ class IntegralController extends Controller
             }
         } else {
             $data = ['status' => 0, 'msg' => '执行失败'];
-            file_put_contents(storage_path('notify.txt'), "收到异步通知\r\n", FILE_APPEND);
+//            file_put_contents(storage_path('notify.txt'), "收到异步通知\r\n", FILE_APPEND);
         }
 
         return json_encode($data);
