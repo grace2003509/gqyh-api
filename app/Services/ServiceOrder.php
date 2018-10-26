@@ -14,6 +14,7 @@ use App\Models\User_Back_Order;
 use App\Models\User_Back_Order_Detail;
 use App\Models\UserMoneyRecord;
 use App\Models\UserOrder;
+use Yansongda\Pay\Pay;
 
 class ServiceOrder
 {
@@ -176,14 +177,41 @@ class ServiceOrder
                     "微支付" => "1",
                     "支付宝" => "2",
                     "余额支付" => "3",
-                    "线下支付" => "4"
                 );
 
                 $user_data = $m_obj->find($Order['User_ID']);
+                $pay = new ServicePay();
                 if ($PaymentMethod[$method]==1) { //微支付
-                    //todo 微信支付退款
+                    //微信支付退款
+                    $notify_url = $_SERVER['HTTP_HOST'] . "/admin/product/refund_notify/{$backid}";
+                    $config = $pay->wx_config($notify_url);
+                    if(isset($config['status']) && $config['status'] == 0){
+                        return $config;
+                    }
+                    $config_biz = [
+                        'out_trade_no' => time() . strval($backid),
+                        'total_fee' => strval(floatval($backinfo['Back_Amount']) * 100), // **单位：分**
+                        'body' => '退款',
+                        'spbill_create_ip' => $_SERVER['REMOTE_ADDR'],
+                    ];
+                    $pay_obj = new Pay($config);
+                    return $pay_obj->driver('wechat')->gateway()->refund($config_biz);
+
                 } elseif ($PaymentMethod[$method]==2) { //支付宝
-                    //todo 支付宝退款
+                    //支付宝退款
+                    $notify_url = $_SERVER['HTTP_HOST'] . "/admin/product/refund_notify/{$backid}";
+                    $config = $pay->ali_config($notify_url, '');
+                    if(isset($config['status']) && $config['status'] == 0){
+                        return $config;
+                    }
+                    $config_biz = [
+                        'out_trade_no' => time() . strval($backid),
+                        'total_fee' => strval(floatval($backinfo['Back_Amount']) * 100), // **单位：分**
+                        'body' => '退款',
+                        'spbill_create_ip' => $_SERVER['REMOTE_ADDR'],
+                    ];
+                    $pay_obj = new Pay($config);
+                    return $pay_obj->driver('alipay')->gateway()->refund($config_biz);
                 } elseif ($PaymentMethod[$method]==3) { //余额支付
                     $User_Money = $backinfo['Back_Amount'] + $user_data['User_Money'];
                     $user_data->User_Money = $User_Money;
@@ -200,22 +228,6 @@ class ServiceOrder
                     $Order_CartList = json_decode($Order['Order_CartList'],true);
                     if(empty($Order_CartList)){
                         $uo_obj->where("Order_ID", $Order['Order_ID'])->update(['Order_Status' => 4]);
-                    }
-                }else if($PaymentMethod[$method]==4){//线下支付
-                    $User_Money = $backinfo['Back_Amount'] + $user_data['User_Money'];
-                    $user_data->User_Money = $User_Money;
-                    $user_data->save();
-
-                    $Data = array(
-                        "Back_Status"=>4,
-                        "Buyer_IsRead"=>0,
-                        "Back_IsCheck"=>1,
-                        "Back_UpdateTime"=>time()
-                    );
-                    $ubo_obj->where('Back_ID', $backid)->update($Data);
-                    $Order_CartList = json_decode($Order['Order_CartList'],true);
-                    if(empty($Order_CartList)){
-                        $uo_obj->where("Order_ID", $Order['Order_ID'])->update(['Order_Status' =>4]);
                     }
                 }
 

@@ -8,25 +8,8 @@
 
 namespace App\Services;
 
-use App\Models\Biz;
-use App\Models\Dis_Account;
-use App\Models\Dis_Account_Record;
-use App\Models\Dis_Agent_Area;
-use App\Models\Dis_Agent_Record;
-use App\Models\Dis_Config;
-use App\Models\Dis_Level;
-use App\Models\Dis_Point_Record;
-use App\Models\Dis_Record;
-use App\Models\Member;
-use App\Models\User_Message;
-use App\Models\UserIntegralRecord;
-use App\Models\UserOrder;
-use App\Models\Setting;
-use App\Models\ShopConfig;
-use App\Models\ShopProduct;
 use App\Models\UsersConfig;
 use App\Models\UsersPayConfig;
-use Illuminate\Support\Facades\DB;
 use Yansongda\Pay\Pay;
 
 class ServicePay
@@ -119,7 +102,7 @@ class ServicePay
         ];
 
         $pay = new Pay($config);
-        return $pay->driver('wechat')->gateway('mp')->pay($config_biz);
+        return $pay->driver('wechat')->gateway('wap')->pay($config_biz);
 
     }
 
@@ -158,7 +141,7 @@ class ServicePay
         ];
 
         $pay = new Pay($config);
-        return $pay->driver('alipay')->gateway('web')->pay($config_biz);
+        return $pay->driver('alipay')->gateway('wap')->pay($config_biz);
     }
 
 }

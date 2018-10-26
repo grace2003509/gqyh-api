@@ -11,7 +11,6 @@ use App\Models\User_Message;
 use App\Models\UserCharge;
 use App\Models\UserIntegralRecord;
 use App\Models\UserMoneyRecord;
-use App\Models\UsersConfig;
 use App\Models\UsersPayConfig;
 use App\Services\ServicePay;
 use Illuminate\Http\Request;
@@ -515,11 +514,11 @@ class IntegralController extends Controller
 
             } elseif ($input['Operator'] == 2) {
 
-                $data = $pay->ali_pay($input['PayAmount'], $rsUser['User_ID'], $charge['Item_ID'], 2, $pay_subject);
+                $data = $pay->ali_pay($input['PayAmount'], $charge['Item_ID'], 2, $pay_subject);
 
             } elseif ($input['Operator'] == 3) {
 
-                $data = $this->balance_pay($input['PayAmount'], $rsUser, $input['PayPassword'], $charge['Item_ID']);
+                $data = $this->balance_pay($input['PayAmount'], $rsUser['User_ID'], $input['PayPassword'], $charge['Item_ID']);
 
             }
         } else {
@@ -530,8 +529,11 @@ class IntegralController extends Controller
     }
 
     //余额充值积分，相关处理
-    private function balance_pay($amount, $rsUser, $pay_password, $ItemID)
+    private function balance_pay($amount, $UserID, $pay_password, $ItemID)
     {
+        $m_obj = new Member();
+        $rsUser = $m_obj->find($UserID);
+
         if ($amount > $rsUser['User_Money']) {
             $data = ['status' => 0, 'msg' => '您的余额不足，请先充值余额'];
             return $data;
@@ -678,7 +680,7 @@ class IntegralController extends Controller
         $notify_url = $_SERVER['HTTP_HOST'] . "/api/center/integral_wx_notify/{$itemid}";
         $config = $wxp_obj->wx_config($notify_url);
         $pay = new Pay($config);
-        $verify = $pay->driver('wechat')->gateway('mp')->verify($request->getContent());
+        $verify = $pay->driver('wechat')->gateway('wap')->verify($request->getContent());
 
         if ($verify) {
             $uc_obj = new UserCharge();

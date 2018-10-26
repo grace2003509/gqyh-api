@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Member;
-use App\Models\ShopConfig;
 use App\Models\UserCharge;
 use App\Models\UserMoneyRecord;
 use App\Services\ServicePay;
@@ -286,7 +285,7 @@ class MoneyController extends Controller
         $notify_url = $_SERVER['HTTP_HOST'] . "/api/center/money_wx_notify/{$itemid}";
         $config = $wxp_obj->wx_config($notify_url);
         $pay = new Pay($config);
-        $verify = $pay->driver('wechat')->gateway('mp')->verify($request->getContent());
+        $verify = $pay->driver('wechat')->gateway('wap')->verify($request->getContent());
 
         if ($verify) {
             $uc_obj = new UserCharge();
