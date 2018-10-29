@@ -347,3 +347,24 @@ function generate_qrcode($data)
 
     return $filename;
 }
+
+
+/**
+ * 生成分销推广海报
+ * @param  string $data 海报内容的base64数据
+ * @return  bool  $Flag 是否成功生成海报
+ *
+ * */
+function generate_postere($img, $UsersID, $owner_id) {
+
+    define('UPLOAD_DIR', $_SERVER["DOCUMENT_ROOT"] . '/data/poster/');
+    $img = str_replace('data:image/png;base64,', '', $img);
+    $img = str_replace(' ', '+', $img);
+    $data = base64_decode($img);
+    $file_name = '';
+    $file_path = UPLOAD_DIR . $UsersID . $owner_id . '.png';
+    $web_path = '/data/poster/' . $UsersID . $owner_id . '.png';
+    $Flag = file_put_contents($file_path, $data);
+
+    return $Flag;
+}

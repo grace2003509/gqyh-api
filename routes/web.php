@@ -80,6 +80,17 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function ($route){
         $api->post('/change_name', 'UserSetController@change_name');
     });
 
+    //分销中心
+    $route->group(['prefix' => 'distribute', 'middleware' => ['check_auth']], function ($api) {
+        //分销商基本信息
+        $api->get('/dis_info', 'DisInfoController@dis_info');
+        $api->get('/dis_menu', 'DisInfoController@dis_menu');
+        //推广二维码
+        $api->get('/pop_link', 'PopularizeController@pop_link');
+        $api->post('/pop_code', 'PopularizeController@pop_code');
+        $api->post('/pop_poster', 'PopularizeController@pop_poster');
+    });
+
     $route->get('/center/integral_rate', 'IntegralController@get_integral_rate');  //积分充值比例
     $route->get('/center/area_list', 'AddressController@get_area_list');  //省市区列表
 

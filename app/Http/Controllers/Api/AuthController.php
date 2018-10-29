@@ -64,7 +64,7 @@ class AuthController extends Controller
             'code' => 'required_if:type,0|string|size:4',
             'type' => 'required|in:0,1',
             'history_url' => 'nullable|url',
-            'OwnerID' => 'nullable|exists:user,User_ID',
+            'OwnerID' => 'nullable|exists:user,User_ID,Is_Distribute,1',
         ];
         $message = [
             'mobile.required' => '手机号码不能为空',
@@ -198,7 +198,7 @@ class AuthController extends Controller
             'mobile' => 'required|mobile|unique:user,User_Mobile',
             'password' => 'required|confirmed|alpha_dash|min:6|max:16',
             'code' => 'required|string|size:4',
-            'OwnerID' => 'nullable|exists:user,User_ID',
+            'OwnerID' => 'nullable|exists:user,User_ID,Is_Distribute,1',
         ];
         $message = [
             'mobile.required' => '手机号码不能为空',

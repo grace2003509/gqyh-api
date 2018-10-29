@@ -245,42 +245,6 @@ class Dis_Account extends Model {
 		}
 		return $lists;
 	}
-	
-	/**
-	 * 返回此分销账号完整父路径
-	 * @param  int $level 此店的分销商层数
-	 * @return String $fullDisPath
-	 */
-	public function getFullDisPath(){
-		if(!empty($this->Dis_Path)){
-			$fullDisPath = trim($this->Dis_Path,',,');
-			$disCollection  = $this->get(array('User_ID','Dis_Path'));
-			$disDictionary = get_dropdown_collection($disCollection,'User_ID');
-			
-			$Dis_Path = trim($this->Dis_Path,',,');
-		
-			//向上循环，直至找到自己的根店分销商
-			while(!empty($Dis_Path)){
-				$first = strstr($Dis_Path,',',TRUE);
-				$first = $first?$first:$Dis_Path;
-				
-				$parentDistirbuteAccount = $disDictionary[$first];
-				$Dis_Path = $parentDistirbuteAccount->Dis_Path;
-				$Dis_Path = trim($Dis_Path,',,');
-			    if(!empty($Dis_Path)){
-					$fullDisPath =  $Dis_Path.','.$fullDisPath;
-				}
-			}					
-			
-		    return  $fullDisPath ;
-	
-		}else{
-			$fullDisPath = '';
-		}
-
-		return $fullDisPath ;
-		
-	}
 
 
     function get_distribute_balance_userids($BuyerID,$userids,$distribute_bonus,$type=0)
