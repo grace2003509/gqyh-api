@@ -60,19 +60,6 @@ class UserInfoController extends Controller
     {
         $input = $request->input();
 
-        $rules = [
-            'UserID' => 'required|exists:user,User_ID'
-        ];
-        $message = [
-            'UserID.required' => '缺少必要的参数UserID',
-            'UserID.exists' => '此用户不存在',
-        ];
-        $validator = Validator::make($input, $rules, $message);
-        if($validator->fails()){
-            $data = ['status' => 0, 'msg' => $validator->messages()->first()];
-            return json_encode($data);
-        }
-
         $m_obj = new Member();
         $sc_obj = new ShopConfig();
         $dl_obj = new Dis_Level();
@@ -143,19 +130,8 @@ class UserInfoController extends Controller
      *          ]
      *     }
      */
-    public function menu_list(Request $request)
+    public function menu_list()
     {
-        $input = $request->input();
-
-        $rules = [
-            'UserID' => 'required|exists:user,User_ID'
-        ];
-        $validator = Validator::make($input, $rules);
-        if($validator->fails()){
-            $data = ['status' => 0, 'msg' => $validator->messages()->first()];
-            return json_encode($data);
-        }
-
         $pc_obj = new PermissionConfig();
 
         $perm_config = $pc_obj->select('Perm_Name', 'Perm_Picture', 'Perm_Url')
@@ -184,7 +160,7 @@ class UserInfoController extends Controller
      * @apiHeader {String} access-key   用户登陆认证token
      *
      * @apiParam {Number}   UserID      用户ID
-     * @apiParam {String}   up_head     上传图片元素名称
+     * @apiParam {String}   up_head     上传图片
      *
      * @apiSuccess {Number} status      状态码（0:失败，1:成功, -1:需要重新登陆）
      * @apiSuccess {String} msg         返回状态说明信息
@@ -211,7 +187,7 @@ class UserInfoController extends Controller
 
         $rules = [
             'UserID' => 'required|exists:user,User_ID',
-            'up_head' => 'required'
+            'up_head' => 'required|image'
         ];
         $message = [
             'UserID.required' => '缺少必要的参数UserID',

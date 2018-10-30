@@ -65,19 +65,6 @@ class IntegralController extends Controller
     {
         $input = $request->input();
 
-        $rules = [
-            'UserID' => 'required|exists:user,User_ID'
-        ];
-        $message = [
-            'UserID.required' => '缺少必要的参数UserID',
-            'UserID.exists' => '此用户不存在',
-        ];
-        $validator = Validator::make($input, $rules, $message);
-        if ($validator->fails()) {
-            $data = ['status' => 0, 'msg' => $validator->messages()->first()];
-            return json_encode($data);
-        }
-
         $uc_obj = new User_Config();
         $m_obj = new Member();
         $uir_obj = new UserIntegralRecord();

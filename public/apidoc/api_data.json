@@ -616,7 +616,7 @@
             "type": "String",
             "optional": false,
             "field": "up_head",
-            "description": "<p>上传图片元素名称</p>"
+            "description": "<p>上传图片</p>"
           }
         ]
       }
@@ -982,8 +982,8 @@
   },
   {
     "type": "get",
-    "url": "/distribute/dis_info",
-    "title": "分销商信息",
+    "url": "/distribute/account_info",
+    "title": "分销商账户信息",
     "group": "分销中心",
     "description": "<p>获取分销商基本信息</p>",
     "header": {
@@ -1041,7 +1041,7 @@
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": {\n             \"User_ID\": 18,  //用户ID\n             \"Account_ID\": 7,  //分销账号ID\n             \"Head_Img\": \"http://localhost:6001/uploadfiles/9nj50igwex/image/5b87a19025.png\",  //头像\n             \"Account_Mobile\": \"13274507043\",  //用户手机号\n             \"Account_Name\": \"grace\",  //账户昵称\n             \"Account_Level\": \"普通会员\",  //分销商等级\n             \"Total_Income\": 1314.00,  //累计佣金\n             \"Balance_Income\": 430.00,  //可提现佣金\n         },\n}",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": {\n             \"User_ID\": 18,  //用户ID\n             \"Account_ID\": 7,  //分销账号ID\n             \"Head_Img\": \"http://localhost:6001/uploadfiles/9nj50igwex/image/5b87a19025.png\",  //头像\n             \"Account_Mobile\": \"13274507043\",  //用户手机号\n             \"Account_Name\": \"grace\",  //账户昵称\n             \"Account_Level\": \"普通会员\",  //分销商等级\n             \"Level_ID\": 1,  //分销商等级ID(1:普通会员，2:vip会员，3:全国总代)\n             \"Total_Income\": 1314.00,  //累计佣金\n             \"Balance_Income\": 430.00,  //可提现佣金\n             \"Cost_Money\": \"1314.00\",  //个人消费金额\n         },\n}",
           "type": "json"
         }
       ]
@@ -1049,13 +1049,13 @@
     "examples": [
       {
         "title": "Example usage:",
-        "content": "curl -i http://localhost:6002/api/distribute/dis_info",
+        "content": "curl -i http://localhost:6002/api/distribute/account_info",
         "type": "curl"
       }
     ],
     "sampleRequest": [
       {
-        "url": "/api/distribute/dis_info"
+        "url": "/api/distribute/account_info"
       }
     ],
     "error": {
@@ -1070,7 +1070,7 @@
     "version": "0.0.0",
     "filename": "app/Http/Controllers/Api/DisInfoController.php",
     "groupTitle": "分销中心",
-    "name": "GetDistributeDis_info"
+    "name": "GetDistributeAccount_info"
   },
   {
     "type": "get",
@@ -1163,6 +1163,190 @@
     "filename": "app/Http/Controllers/Api/DisInfoController.php",
     "groupTitle": "分销中心",
     "name": "GetDistributeDis_menu"
+  },
+  {
+    "type": "get",
+    "url": "/distribute/group_info",
+    "title": "团队设置信息",
+    "group": "分销中心",
+    "description": "<p>获取分销商关于团队的设置信息</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>用户信息数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": {\n          \"myterm\": \"我的团队\",   //管理称呼\n          \"childlevelterm\": {   //分销团队等级称呼\n                 \"1\": \"一级分销商\",\n                 \"2\": \"二级分销商\",\n                 \"3\": \"三级分销商\"\n            },\n          \"catcommission\": \"佣金\",  //佣金称呼\n          \"cattuijian\": \"我的推荐人\"   //推荐人称呼\n     },\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/distribute/group_info",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/distribute/group_info"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/DisInfoController.php",
+    "groupTitle": "分销中心",
+    "name": "GetDistributeGroup_info"
+  },
+  {
+    "type": "get",
+    "url": "/distribute/pop_info",
+    "title": "分销推广设置信息",
+    "group": "分销中心",
+    "description": "<p>获取分销推广设置信息</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>用户信息数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": {\n             \"pop_url\": \"http://localhost:6002/api/login?OwnerID=18\",  //推广链接\n             \"pop_code_bg\": \"http://localhost:6001/uploadfiles/9nj50igwex/image/5ba3194682.jpg\",  //推广二维码背景图\n             \"shop_name\": \"观前一号\",  //商城名称\n             \"user_mobile\": \"132****7043\",  //用户手机号\n             \"is_need\": \"1\",  //是否需要生成海报（1:是，2:否）\n         },\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/distribute/pop_info",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/distribute/pop_info"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/DisInfoController.php",
+    "groupTitle": "分销中心",
+    "name": "GetDistributePop_info"
   },
   {
     "type": "get",
@@ -2009,10 +2193,109 @@
   },
   {
     "type": "get",
-    "url": "/distribute/pop_link",
-    "title": "推广链接",
-    "group": "推广分享",
-    "description": "<p>获取分销分销商推广链接</p>",
+    "url": "/distribute/my_team_list",
+    "title": "团队明细",
+    "group": "我的团队",
+    "description": "<p>获取分销商三级团队明细</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "LevelID",
+            "description": "<p>第几级分销商(1:一级分销商，2:二级分销商，3:三级分销商)</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>用户信息数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": {\n         \"team_data\": [    //当前级别分销商列表\n             {\n                 \"Account_ID\": 3,   //分销账号ID\n                 \"User_ID\": 3,   //用户ID\n                 \"dis_level_name\": \"全国总代\",   //分销商等级\n                 \"childern_num\": 1,   //分销商下级数量\n                 \"User_Mobile\": \"18896953657\",   //手机号\n                 \"Account_CreateTime\": \"2018/07/31 10:45:17\",   //日期\n                 \"mess_count\": 0,   //未读信息数量（只一级分销商显示）\n             },\n             {\n                 \"Account_ID\": 5,   //分销账号ID\n                 \"User_ID\": 6,   //用户ID\n                 \"dis_level_name\": \"VIP会员\",   //分销商等级\n                 \"childern_num\": 1,   //分销商下级数量\n                 \"User_Mobile\": \"13696960295\",   //手机号\n                 \"Account_CreateTime\": \"2018/07/31 10:45:17\",\n                 \"mess_count\": 0,\n             }\n         ],\n         \"team_num\": 5   // 当前级别分销商数量\n     },\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/distribute/my_team_list",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/distribute/my_team_list"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/GroupController.php",
+    "groupTitle": "我的团队",
+    "name": "GetDistributeMy_team_list"
+  },
+  {
+    "type": "get",
+    "url": "/distribute/my_team_num",
+    "title": "团队数量",
+    "group": "我的团队",
+    "description": "<p>获取分销商三级团队数量</p>",
     "header": {
       "fields": {
         "Header": [
@@ -2068,7 +2351,7 @@
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": {\n          \"pop_url\": \"http://localhost:6002/api/login?OwnerID=18\"  //推广链接\n     },\n}",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": {\n         \"list\": {\n             \"1\": 2,   // 一级分销商数量\n             \"2\": 2,   // 二级分销商数量\n             \"3\": 1   // 三级分销商数量\n             },\n         \"is_top_level\": 1,   //是否可以查看分销商明细（1:是，0:否）\n         \"team_num\": 5   // 三级分销商总数\n     },\n}",
           "type": "json"
         }
       ]
@@ -2076,13 +2359,13 @@
     "examples": [
       {
         "title": "Example usage:",
-        "content": "curl -i http://localhost:6002/api/distribute/pop_link",
+        "content": "curl -i http://localhost:6002/api/distribute/my_team_num",
         "type": "curl"
       }
     ],
     "sampleRequest": [
       {
-        "url": "/api/distribute/pop_link"
+        "url": "/api/distribute/my_team_num"
       }
     ],
     "error": {
@@ -2095,16 +2378,16 @@
       ]
     },
     "version": "0.0.0",
-    "filename": "app/Http/Controllers/Api/PopularizeController.php",
-    "groupTitle": "推广分享",
-    "name": "GetDistributePop_link"
+    "filename": "app/Http/Controllers/Api/GroupController.php",
+    "groupTitle": "我的团队",
+    "name": "GetDistributeMy_team_num"
   },
   {
     "type": "post",
     "url": "/distribute/pop_code",
     "title": "生成推广二维码",
     "group": "推广分享",
-    "description": "<p>生成分销分销商推广二维码</p>",
+    "description": "<p>生成分销商推广二维码</p>",
     "header": {
       "fields": {
         "Header": [

@@ -79,11 +79,7 @@ class CouponController extends Controller
             'UserID' => 'required|exists:user,User_ID',
             'cur_page' => 'required|integer|min:1',
         ];
-        $message = [
-            'UserID.required' => '缺少必要的参数UserID',
-            'UserID.exists' => '此用户不存在',
-        ];
-        $validator = Validator::make($input, $rules, $message);
+        $validator = Validator::make($input, $rules);
         if($validator->fails()){
             $data = ['status' => 0, 'msg' => $validator->messages()->first()];
             return json_encode($data);
@@ -184,11 +180,7 @@ class CouponController extends Controller
             'UserID' => 'required|exists:user,User_ID',
             'cur_page' => 'required|integer|min:1',
         ];
-        $message = [
-            'UserID.required' => '缺少必要的参数UserID',
-            'UserID.exists' => '此用户不存在',
-        ];
-        $validator = Validator::make($input, $rules, $message);
+        $validator = Validator::make($input, $rules);
         if($validator->fails()){
             $data = ['status' => 0, 'msg' => $validator->messages()->first()];
             return json_encode($data);
@@ -286,11 +278,7 @@ class CouponController extends Controller
             'UserID' => 'required|exists:user,User_ID',
             'cur_page' => 'required|integer|min:1',
         ];
-        $message = [
-            'UserID.required' => '缺少必要的参数UserID',
-            'UserID.exists' => '此用户不存在',
-        ];
-        $validator = Validator::make($input, $rules, $message);
+        $validator = Validator::make($input, $rules);
         if($validator->fails()){
             $data = ['status' => 0, 'msg' => $validator->messages()->first()];
             return json_encode($data);

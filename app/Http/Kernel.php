@@ -58,5 +58,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
 
         'check_auth' => \App\Http\Middleware\CheckAuth::class,
+        'check_dis_account' => \App\Http\Middleware\CheckDisAccount::class,
     ];
 }

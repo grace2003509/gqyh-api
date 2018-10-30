@@ -81,14 +81,20 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function ($route){
     });
 
     //分销中心
-    $route->group(['prefix' => 'distribute', 'middleware' => ['check_auth']], function ($api) {
+    $route->group(['prefix' => 'distribute', 'middleware' => ['check_dis_account']], function ($api) {
         //分销商基本信息
-        $api->get('/dis_info', 'DisInfoController@dis_info');
+        $api->get('/account_info', 'DisInfoController@account_info');
+        $api->get('/pop_info', 'DisInfoController@pop_info');
+        $api->get('/group_info', 'DisInfoController@group_info');
         $api->get('/dis_menu', 'DisInfoController@dis_menu');
         //推广二维码
         $api->get('/pop_link', 'PopularizeController@pop_link');
         $api->post('/pop_code', 'PopularizeController@pop_code');
         $api->post('/pop_poster', 'PopularizeController@pop_poster');
+        //我的团队
+        $api->get('/my_team_num', 'GroupController@my_team_num');
+        $api->get('/my_team_list', 'GroupController@my_team_list');
+        $api->get('/my_user_list', 'GroupController@my_user_list');
     });
 
     $route->get('/center/integral_rate', 'IntegralController@get_integral_rate');  //积分充值比例

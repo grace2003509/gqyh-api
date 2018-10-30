@@ -58,19 +58,6 @@ class AddressController extends Controller
     {
         $input = $request->input();
 
-        $rules = [
-            'UserID' => 'required|exists:user,User_ID',
-        ];
-        $message = [
-            'UserID.required' => '缺少必要的参数UserID',
-            'UserID.exists' => '此用户不存在',
-        ];
-        $validator = Validator::make($input, $rules, $message);
-        if($validator->fails()){
-            $data = ['status' => 0, 'msg' => $validator->messages()->first()];
-            return json_encode($data);
-        }
-
         $ua_obj = new User_Address();
         $a_obj = new Area();
 
@@ -133,7 +120,6 @@ class AddressController extends Controller
         $input = $request->input();
 
         $rules = [
-            'UserID' => 'required|exists:user,User_ID',
             'AddressID' => 'nullable|exists:user_address,Address_ID',
             'Name' => 'required|string|min:1|max:50',
             'Mobile' => 'required|mobile',
@@ -145,11 +131,7 @@ class AddressController extends Controller
             'TrueName' => 'nullable|string|min:1|max:10',
             'Certificate' => 'nullable|string|size:18',
         ];
-        $message = [
-            'UserID.required' => '缺少必要的参数UserID',
-            'UserID.exists' => '此用户不存在',
-        ];
-        $validator = Validator::make($input, $rules, $message);
+        $validator = Validator::make($input, $rules);
         if($validator->fails()){
             $data = ['status' => 0, 'msg' => $validator->messages()->first()];
             return json_encode($data);
@@ -247,14 +229,9 @@ class AddressController extends Controller
         $input = $request->input();
 
         $rules = [
-            'UserID' => 'required|exists:user,User_ID',
             'AddressID' => 'nullable|exists:user_address,Address_ID',
         ];
-        $message = [
-            'UserID.required' => '缺少必要的参数UserID',
-            'UserID.exists' => '此用户不存在',
-        ];
-        $validator = Validator::make($input, $rules, $message);
+        $validator = Validator::make($input, $rules);
         if($validator->fails()){
             $data = ['status' => 0, 'msg' => $validator->messages()->first()];
             return json_encode($data);

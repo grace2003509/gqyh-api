@@ -48,18 +48,6 @@ class MessageController extends Controller
     public function sys_message_num(Request $request)
     {
         $input = $request->input();
-        $rules = [
-            'UserID' => 'required|exists:user,User_ID'
-        ];
-        $message = [
-            'UserID.required' => '缺少必要的参数UserID',
-            'UserID.exists' => '此用户不存在',
-        ];
-        $validator = Validator::make($input, $rules, $message);
-        if($validator->fails()){
-            $data = ['status' => 0, 'msg' => $validator->messages()->first()];
-            return json_encode($data);
-        }
 
         $um_obj = new User_Message();
         $umr_obj = new User_Message_Record();

@@ -49,8 +49,10 @@ class UserSetController extends Controller
             'code' => 'required|string|size:4',
         ];
         $message = [
-            'UserID.required' => '缺少必要的参数UserID',
-            'UserID.exists' => '此用户不存在',
+            'mobile.required' => '手机号码不能为空',
+            'mobile.mobile' => '手机号格式不正确',
+            'code.required' => '验证码不能为空',
+            'code.size' => '验证码错误',
         ];
         $validator = Validator::make($input, $rules, $message);
         if($validator->fails()){
