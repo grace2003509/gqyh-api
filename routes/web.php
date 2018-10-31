@@ -95,6 +95,10 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function ($route){
         $api->get('/my_team_num', 'GroupController@my_team_num');
         $api->get('/my_team_list', 'GroupController@my_team_list');
         $api->get('/my_user_list', 'GroupController@my_user_list');
+        //会员聊天
+        $api->post('/send_mess', 'UserMessageController@send_mess');
+        $api->get('/mess_list', 'UserMessageController@mess_list');
+        $api->post('/read_mess', 'UserMessageController@read_mess');
     });
 
     $route->get('/center/integral_rate', 'IntegralController@get_integral_rate');  //积分充值比例

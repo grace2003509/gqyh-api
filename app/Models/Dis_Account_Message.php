@@ -10,8 +10,15 @@ class Dis_Account_Message extends Model
     protected $table = "distribute_account_message";
     public $timestamps = false;
 
-    protected $fillable = ['Users_ID', 'User_ID', 'Receiver_User_ID', 'Mess_Content', 'Mess_Status','Mess_CreateTime'];
+    protected $fillable = ['UsersID', 'User_ID', 'Receiver_User_ID', 'Mess_Content', 'Mess_Status','Mess_CreateTime'];
+
+    protected $hidden = ['UsersID'];
 
 
+    //发送信息用户
+    public function send_user()
+    {
+        return $this->belongsTo(Member::class, 'User_ID', 'User_ID');
+    }
 
 }

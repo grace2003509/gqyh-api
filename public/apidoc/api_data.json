@@ -2259,7 +2259,7 @@
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": {\n         \"team_data\": [    //当前级别分销商列表\n             {\n                 \"Account_ID\": 3,   //分销账号ID\n                 \"User_ID\": 3,   //用户ID\n                 \"dis_level_name\": \"全国总代\",   //分销商等级\n                 \"childern_num\": 1,   //分销商下级数量\n                 \"User_Mobile\": \"18896953657\",   //手机号\n                 \"Account_CreateTime\": \"2018/07/31 10:45:17\",   //日期\n                 \"mess_count\": 0,   //未读信息数量（只一级分销商显示）\n             },\n             {\n                 \"Account_ID\": 5,   //分销账号ID\n                 \"User_ID\": 6,   //用户ID\n                 \"dis_level_name\": \"VIP会员\",   //分销商等级\n                 \"childern_num\": 1,   //分销商下级数量\n                 \"User_Mobile\": \"13696960295\",   //手机号\n                 \"Account_CreateTime\": \"2018/07/31 10:45:17\",\n                 \"mess_count\": 0,\n             }\n         ],\n         \"team_num\": 5   // 当前级别分销商数量\n     },\n}",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": {\n         \"team_data\": [    //当前级别分销商列表\n             {\n                 \"Account_ID\": 3,   //分销账号ID\n                 \"User_ID\": 3,   //用户ID\n                 \"dis_level_name\": \"全国总代\",   //分销商等级\n                 \"childern_num\": 1,   //分销商下级数量\n                 \"User_Mobile\": \"18896953657\",   //手机号\n                 \"Account_CreateTime\": \"2018/07/31 10:45:17\",   //日期\n                 \"mess_count\": 0,   //未读聊天信息数量（只一级分销商显示）\n             },\n             {\n                 \"Account_ID\": 5,   //分销账号ID\n                 \"User_ID\": 6,   //用户ID\n                 \"dis_level_name\": \"VIP会员\",   //分销商等级\n                 \"childern_num\": 1,   //分销商下级数量\n                 \"User_Mobile\": \"13696960295\",   //手机号\n                 \"Account_CreateTime\": \"2018/07/31 10:45:17\",\n                 \"mess_count\": 0,\n             }\n         ],\n         \"team_num\": 5   // 当前级别分销商数量\n     },\n}",
           "type": "json"
         }
       ]
@@ -2381,6 +2381,106 @@
     "filename": "app/Http/Controllers/Api/GroupController.php",
     "groupTitle": "我的团队",
     "name": "GetDistributeMy_team_num"
+  },
+  {
+    "type": "get",
+    "url": "/distribute/my_user_list",
+    "title": "我的会员列表",
+    "group": "我的团队",
+    "description": "<p>获取分销商全部下级会员信息</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "cur_page",
+            "defaultValue": "1",
+            "description": "<p>当前页数</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>用户信息数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": {\n         \"current_page\": 1,   //当前页数\n         \"data\": [\n             {\n                 \"User_ID\": 3,  //会员ID\n                 \"User_NickName\": null,  //昵称\n                 \"User_Mobile\": \"18896953657\",  //手机号\n                 \"User_HeadImg\": null,  //头像\n                 \"User_CreateTime\": \"2018/07/31 10:42:31\",\n                 \"mess_num\": 0   //未读聊天消息数\n             },\n             {\n                 \"User_ID\": 4,\n                 \"User_NickName\": null,\n                 \"User_Mobile\": \"13913141113\",\n                 \"User_HeadImg\": null,\n                 \"User_CreateTime\": \"2018/07/31 10:47:44\",\n                 \"mess_num\": 0\n             },\n         ],\n         \"from\": 1,\n         \"last_page\": 1,\n         \"next_page_url\": null,   //下一页\n         \"path\": \"http://localhost:6002/api/distribute/my_user_list\",   //路径\n         \"per_page\": 20,   //每页数量\n         \"prev_page_url\": null,  //上一页\n         \"to\": 6,\n         \"total\": 6   //数据总数\n     },\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/distribute/my_user_list",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/distribute/my_user_list"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/GroupController.php",
+    "groupTitle": "我的团队",
+    "name": "GetDistributeMy_user_list"
   },
   {
     "type": "post",
@@ -4116,6 +4216,310 @@
     "filename": "app/Http/Controllers/Api/IntegralController.php",
     "groupTitle": "积分",
     "name": "PostCenterIntegral_largess"
+  },
+  {
+    "type": "get",
+    "url": "/distribute/mess_list",
+    "title": "聊天消息列表",
+    "group": "聊天室",
+    "description": "<p>获取聊天消息列表</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "Receiver_UserID",
+            "description": "<p>接收用户ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>用户信息数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": [\n         {\n             \"Mes_ID\": 3,\n             \"User_ID\": 1,   //发送方账号ID\n             \"Receiver_User_ID\": 18,  //接收方ID\n             \"Mess_Content\": \"sgegsegt\",    //消息内容\n             \"Mess_Status\": 0,   //消息状态（0:未读，1:已读）\n             \"Mess_CreateTime\": 1540966134,   //发送时间\n             \"send_user\": {    //发送消息用户基本信息\n                 \"User_Mobile\": \"15501691825\",\n                 \"User_NickName\": \"1\",\n                 \"User_HeadImg\": \"/uploadfiles/userfile/1/image/5b5fcec74a.jpg\"\n             }\n             \"position\": \"r\"    //r:表示为登陆账号发送的信息，在右侧显示；l:表示为对话者发送的信息，在左侧显示\n         },\n     ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/distribute/mess_list",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/distribute/mess_list"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/UserMessageController.php",
+    "groupTitle": "聊天室",
+    "name": "GetDistributeMess_list"
+  },
+  {
+    "type": "post",
+    "url": "/distribute/read_mess",
+    "title": "修改消息状态",
+    "group": "聊天室",
+    "description": "<p>将消息列表中未读消息的状态改为已读</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "Receiver_UserID",
+            "description": "<p>对话用户ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>用户信息数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/distribute/read_mess",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/distribute/read_mess"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/UserMessageController.php",
+    "groupTitle": "聊天室",
+    "name": "PostDistributeRead_mess"
+  },
+  {
+    "type": "post",
+    "url": "/distribute/send_mess",
+    "title": "发送消息",
+    "group": "聊天室",
+    "description": "<p>向自己的下级会员发送聊天消息</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "Receiver_UserID",
+            "description": "<p>接收用户ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "Mess_Content",
+            "description": "<p>消息内容</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>用户信息数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/distribute/send_mess",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/distribute/send_mess"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/UserMessageController.php",
+    "groupTitle": "聊天室",
+    "name": "PostDistributeSend_mess"
   },
   {
     "type": "get",

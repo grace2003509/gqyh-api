@@ -6,6 +6,7 @@ use App\Models\Dis_Account;
 use App\Models\Dis_Account_Message;
 use App\Models\Dis_Config;
 use App\Models\Dis_Level;
+use App\Models\Member;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -120,7 +121,7 @@ class GroupController extends Controller
      *                      "childern_num": 1,   //分销商下级数量
      *                      "User_Mobile": "18896953657",   //手机号
      *                      "Account_CreateTime": "2018/07/31 10:45:17",   //日期
-     *                      "mess_count": 0,   //未读信息数量（只一级分销商显示）
+     *                      "mess_count": 0,   //未读聊天信息数量（只一级分销商显示）
      *                  },
      *                  {
      *                      "Account_ID": 5,   //分销账号ID
@@ -221,27 +222,33 @@ class GroupController extends Controller
      *          "status": "1",
      *          "msg": "成功",
      *          "data": {
-     *              "team_data": [    //当前级别分销商列表
+     *              "current_page": 1,   //当前页数
+     *              "data": [
      *                  {
-     *                      "Account_ID": 3,   //分销账号ID
-     *                      "User_ID": 3,   //用户ID
-     *                      "dis_level_name": "全国总代",   //分销商等级
-     *                      "childern_num": 1,   //分销商下级数量
-     *                      "User_Mobile": "18896953657",   //手机号
-     *                      "Account_CreateTime": "2018/07/31 10:45:17",   //日期
-     *                      "mess_count": 0,   //未读信息数量（只一级分销商显示）
+     *                      "User_ID": 3,  //会员ID
+     *                      "User_NickName": null,  //昵称
+     *                      "User_Mobile": "18896953657",  //手机号
+     *                      "User_HeadImg": null,  //头像
+     *                      "User_CreateTime": "2018/07/31 10:42:31",
+     *                      "mess_num": 0   //未读聊天消息数
      *                  },
      *                  {
-     *                      "Account_ID": 5,   //分销账号ID
-     *                      "User_ID": 6,   //用户ID
-     *                      "dis_level_name": "VIP会员",   //分销商等级
-     *                      "childern_num": 1,   //分销商下级数量
-     *                      "User_Mobile": "13696960295",   //手机号
-     *                      "Account_CreateTime": "2018/07/31 10:45:17",
-     *                      "mess_count": 0,
-     *                  }
+     *                      "User_ID": 4,
+     *                      "User_NickName": null,
+     *                      "User_Mobile": "13913141113",
+     *                      "User_HeadImg": null,
+     *                      "User_CreateTime": "2018/07/31 10:47:44",
+     *                      "mess_num": 0
+     *                  },
      *              ],
-     *              "team_num": 5   // 当前级别分销商数量
+     *              "from": 1,
+     *              "last_page": 1,
+     *              "next_page_url": null,   //下一页
+     *              "path": "http://localhost:6002/api/distribute/my_user_list",   //路径
+     *              "per_page": 20,   //每页数量
+     *              "prev_page_url": null,  //上一页
+     *              "to": 6,
+     *              "total": 6   //数据总数
      *          },
      *     }
      */
@@ -257,5 +264,56 @@ class GroupController extends Controller
             return ['status' => 0, 'msg' => $validator->messages()->first()];
         }
 
+        $User_ID = $input['UserID'];
+        $m_obj = new Member();
+        $dam_obj = new Dis_Account_Message();
+
+        $root_user = $m_obj->select('Root_ID')->find($User_ID);
+        if($root_user['Root_ID'] == 0){
+            $level = $m_obj->select('User_ID')->where('Root_ID', $User_ID)->count();
+        }else{
+            $level = $m_obj->select('User_ID')->where('Root_ID', $root_user['Root_ID'])->count();
+        }
+        $result = $user_id = [$User_ID];
+        for ($i = 0; $i < $level; $i++) {
+            $dataUserID = $this->getSonUserID($user_id);
+            if (empty($dataUserID)) {
+                break;
+            } else {
+                $result = array_merge($result, $dataUserID);
+                $user_id = $dataUserID;
+            }
+        }
+
+        $user_list = $m_obj->select('User_ID', 'User_NickName', 'User_Mobile', 'User_HeadImg', 'User_CreateTime')
+            ->whereIn('Owner_Id', $result)->paginate(20, $input['cur_page']);
+
+        foreach($user_list as $key => $value){
+            $num = $dam_obj->where('Receiver_User_ID', $User_ID)
+                ->where('User_ID', $value['User_ID'])
+                ->where('Mess_Status', 0)
+                ->count();
+            $value['mess_num'] = $num;
+            $value['User_CreateTime'] = ldate($value['User_CreateTime']);
+        }
+
+        return json_encode(['status' => 1, 'msg' => '成功', 'data' => $user_list]);
+
+    }
+
+
+
+    /**
+     * 返回下级用户user_id
+     */
+    private function getSonUserID($invite_user_id, $is_distribute = 1)
+    {
+        $m_obj2 = new Member();
+        if($is_distribute == 1){
+            $m_obj2 = $m_obj2->where('Is_Distribute', 1);
+        }
+        $rows = $m_obj2->select('User_ID')->whereIn('Owner_Id', $invite_user_id)->get()->toArray();
+
+        return $rows;
     }
 }
