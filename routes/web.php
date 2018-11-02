@@ -86,6 +86,7 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function ($route){
         $api->get('/account_info', 'DisInfoController@account_info');
         $api->get('/pop_info', 'DisInfoController@pop_info');
         $api->get('/group_info', 'DisInfoController@group_info');
+        $api->get('/protitle_info', 'DisInfoController@protitle_info');
         $api->get('/dis_menu', 'DisInfoController@dis_menu');
         //推广二维码
         $api->get('/pop_link', 'PopularizeController@pop_link');
@@ -105,6 +106,11 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function ($route){
         $api->get('agent_record', 'RecordController@agent_record');  //区域代理奖
         $api->get('push_record', 'RecordController@push_record');  //区域代理奖
         $api->get('resale_record', 'RecordController@resale_record');  //重消奖
+        //财富排行榜
+        $api->get('home_income_list', 'RankingController@home_income_list');
+        $api->get('posterity_income_list', 'RankingController@posterity_income_list');
+        //区域代理
+        $api->get('agent_apply_list', 'AgentController@agent_apply_list');
     });
 
     $route->get('/center/integral_rate', 'IntegralController@get_integral_rate');  //积分充值比例

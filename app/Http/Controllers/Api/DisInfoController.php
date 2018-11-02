@@ -210,6 +210,104 @@ class DisInfoController extends Controller
 
 
     /**
+     * @api {get} /distribute/protitle_info  爵位设置信息
+     * @apiGroup 分销中心
+     * @apiDescription 获取分销商关于爵位的设置信息
+     *
+     * @apiHeader {String} access-key   用户登陆认证token
+     *
+     * @apiParam {Number}   UserID      用户ID
+     *
+     * @apiSuccess {Number} status      状态码（0:失败，1:成功, -1:需要重新登陆）
+     * @apiSuccess {String} msg         返回状态说明信息
+     * @apiSuccess {Object} data        用户信息数据
+     *
+     * @apiExample {curl} Example usage:
+     *     curl -i http://localhost:6002/api/distribute/protitle_info
+     *
+     * @apiSampleRequest /api/distribute/protitle_info
+     *
+     * @apiErrorExample {json} Error-Response:
+     *     {
+     *          "status": "0",
+     *          "msg": "失败",
+     *     }
+     * @apiSuccessExample {json} Success-Response:
+     *     {
+     *          "status": "1",
+     *          "msg": "成功",
+     *          "data": {
+     *              "protitle_rate": {
+     *                  "1": {   //爵位级别
+     *                      "Name": "初级经理",    //级别名称
+     *                      "check_next": 0,   //升级需几个下级爵位会员
+     *                      "check_money": "5000",   //升级所需金额
+     *                      "check_rate": [
+     *                          "10"   //一级会员提现获奖金比例
+     *                      ]
+     *                  },
+     *                  "2": {
+     *                      "Name": "中级经理",
+     *                      "check_next": "3",
+     *                      "check_money": 0,
+     *                      "check_rate": [
+     *                          "10",
+     *                          "15"
+     *                      ]
+     *                  },
+     *                  "3": {
+     *                      "Name": "高级经理",
+     *                      "check_next": "1",
+     *                      "check_money": 0,
+     *                      "check_rate": [
+     *                          "30",
+     *                          "25",
+     *                          "20"
+     *                      ]
+     *                  }
+     *              },
+     *              "account_protitle": "高级经理",   //当前用户爵位
+     *              "account_protitle_level": 3,   //当前用户爵位级别
+     *              "Sales_Group": "6570.00"   //团队累计业绩
+     *          },
+     *     }
+     */
+    public function protitle_info(Request $request)
+    {
+        $input = $request->input();
+        $dc_obj = new Dis_Config();
+        $da_obj = new Dis_Account();
+        $dar_obj = new Dis_Account_Record();
+
+        $dis_config = $dc_obj->select('Pro_Title_Rate')->find(1);
+
+        $rsAccount = $da_obj->where('User_ID', $input['UserID'])->first();
+
+        $Pro_Title_Rate = json_decode($dis_config['Pro_Title_Rate'], true);
+        $Pro_Rate = [];
+        foreach($Pro_Title_Rate as $key => $value){
+            if($key != 'Level_Num'){
+                $value['check_rate'] = explode(',', $value['check_rate']);
+                $Pro_Rate[$key] = $value;
+            }
+        }
+
+        $posterity = $rsAccount->getPosterity();
+
+        $info = [
+            'protitle_rate' => $Pro_Rate,
+            'account_protitle' => $dc_obj->get_dis_pro_rate_title()[$rsAccount['Professional_Title']]['Name'],
+            'account_protitle_level' => $rsAccount['Professional_Title'],
+            'Sales_Group' => round_pad_zero($dar_obj->get_my_leiji_vip_sales($input['UserID'],$posterity, 0, 1),2),
+        ];
+
+        $data = ['status' => 1, 'msg' => '成功', 'data' => $info];
+
+        return json_encode($data);
+    }
+
+
+    /**
      * @api {get} /distribute/dis_menu  分销中心菜单
      * @apiGroup 分销中心
      * @apiDescription 获取分销中心菜单

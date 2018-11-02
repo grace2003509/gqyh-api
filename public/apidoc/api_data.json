@@ -1850,6 +1850,190 @@
   },
   {
     "type": "get",
+    "url": "/distribute/protitle_info",
+    "title": "爵位设置信息",
+    "group": "分销中心",
+    "description": "<p>获取分销商关于爵位的设置信息</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>用户信息数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": {\n          \"myterm\": \"我的团队\",   //管理称呼\n          \"childlevelterm\": {   //分销团队等级称呼\n                 \"1\": \"一级分销商\",\n                 \"2\": \"二级分销商\",\n                 \"3\": \"三级分销商\"\n            },\n          \"catcommission\": \"佣金\",  //佣金称呼\n          \"cattuijian\": \"我的推荐人\"   //推荐人称呼\n     },\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/distribute/protitle_info",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/distribute/protitle_info"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/DisInfoController.php",
+    "groupTitle": "分销中心",
+    "name": "GetDistributeProtitle_info"
+  },
+  {
+    "type": "get",
+    "url": "/distribute/agent_apply_list",
+    "title": "区域代理申请记录",
+    "group": "区域代理",
+    "description": "<p>获取分销商区域代理申请记录</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>用户信息数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": [\n         {\n             \"Order_ID\": 14,   //订单ID\n             \"User_ID\": 1,   //用户ID\n             \"Area_Concat\": \"河北\",   //申请区域\n             \"Order_Status\": 3,  //申请状态代码\n             \"status\": 3,  //申请状态\n             \"Refuse_Be\": \"拒绝\",   //拒绝原因\n             \"Order_TotalPrice\": \"3000000.00\",   //订单金额\n             \"Order_CreateTime\": \"2018-08-29 13:13:10\",   //订单创建时间\n         },\n     ],\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/distribute/agent_apply_list",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/distribute/agent_apply_list"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/AgentController.php",
+    "groupTitle": "区域代理",
+    "name": "GetDistributeAgent_apply_list"
+  },
+  {
+    "type": "get",
     "url": "/center/address_list",
     "title": "地址列表",
     "group": "地址管理",
@@ -5537,6 +5721,190 @@
     "filename": "app/Http/Controllers/Api/OrderController.php",
     "groupTitle": "订单中心",
     "name": "PostCenterOrder_receive"
+  },
+  {
+    "type": "get",
+    "url": "/distribute/home_income_list",
+    "title": "总部分销商排行",
+    "group": "财富排行榜",
+    "description": "<p>获取总部分销商佣金排行列表</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>用户信息数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": [\n         {\n             \"Account_ID\": 14,   //分销账户ID\n             \"User_ID\": 1,   //用户ID\n             \"Total_Income\": \"13845.70\",   //累计佣金\n             \"Professional_Title\": 3,  //分销商爵位级别\n             \"protitle_name\": \"高级经理\",   //爵位名称\n             \"user_headimg\": \"localhost:6002/uploadfiles/userfile/1/image/5b5fcec74a.jpg\",   //头像\n             \"user_mobile\": \"15501691825\",   //手机号\n         },\n     ],\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/distribute/home_income_list",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/distribute/home_income_list"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"error\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/RankingController.php",
+    "groupTitle": "财富排行榜",
+    "name": "GetDistributeHome_income_list"
+  },
+  {
+    "type": "get",
+    "url": "/distribute/posterity_income_list",
+    "title": "下级分销商排行",
+    "group": "财富排行榜",
+    "description": "<p>获取下级分销商佣金排行列表</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>用户信息数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": [\n         {\n             \"Account_ID\": 14,   //分销账户ID\n             \"User_ID\": 1,   //用户ID\n             \"Total_Income\": \"13845.70\",   //累计佣金\n             \"Professional_Title\": 3,  //分销商爵位级别\n             \"protitle_name\": \"高级经理\",   //爵位名称\n             \"user_headimg\": \"localhost:6002/uploadfiles/userfile/1/image/5b5fcec74a.jpg\",   //头像\n             \"user_mobile\": \"15501691825\",   //手机号\n         },\n     ],\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/distribute/posterity_income_list",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/distribute/posterity_income_list"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/RankingController.php",
+    "groupTitle": "财富排行榜",
+    "name": "GetDistributePosterity_income_list"
   },
   {
     "type": "get",
