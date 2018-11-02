@@ -982,6 +982,506 @@ define({ "api": [
   },
   {
     "type": "get",
+    "url": "/distribute/agent_record",
+    "title": "区域代理奖明细",
+    "group": "佣金明细",
+    "description": "<p>获取分销商区域代理奖明细列表</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "cur_page",
+            "defaultValue": "1",
+            "description": "<p>当前页数</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>用户信息数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": {\n         \"current_page\": 1,   //当前页数\n         \"data\": [\n             {\n                 \"Record_ID\": 14,   //记录ID\n                 \"Account_ID\": 1,   //分销账户ID\n                 \"Order_Sn\": \"45591254\",  //订单编号\n                 \"Order_ID\": 158,   //订单ID\n                 \"Record_Money\": \"22.50\",   //佣金金额\n                 \"Products_PriceX\": \"22.50\",   //商品价格\n                 \"Products_Qty\": \"1\",   //商品数量\n                 \"Products_Name\": \"VIP会员商品\",   //商品名称\n                 \"Record_CreateTime\": \"2018/09/27 09:42:34\"   //获得时间\n             },\n         ],\n         \"from\": 1,\n         \"last_page\": 1,\n         \"next_page_url\": null,   //下一页\n         \"path\": \"http://localhost:6002/api/distribute/agent_record\",   //路径\n         \"per_page\": 20,   //每页数量\n         \"prev_page_url\": null,  //上一页\n         \"to\": 6,\n         \"total\": 6   //数据总数\n     },\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/distribute/agent_record",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/distribute/agent_record"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/RecordController.php",
+    "groupTitle": "佣金明细",
+    "name": "GetDistributeAgent_record"
+  },
+  {
+    "type": "get",
+    "url": "/distribute/dis_record",
+    "title": "财务(分销)明细",
+    "group": "佣金明细",
+    "description": "<p>获取分销商财务（即分销奖）明细列表</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "cur_page",
+            "defaultValue": "1",
+            "description": "<p>当前页数</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>用户信息数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": {\n         \"current_page\": 1,   //当前页数\n         \"data\": [\n             {\n                 \"Record_ID\": 107,   //记录ID\n                 \"Ds_Record_ID\": 118,\n                 \"User_ID\": 1,  //会员ID\n                 \"level\": 3,   //获取第几级佣金\n                 \"Record_Description\": \"下属分销商分销1个钙片¥30.00成功，获取奖金\",   //佣金描述\n                 \"Record_CreateTime\": \"2018/09/13 18:35:37\",   //时间\n                 \"Record_Money\": \"3.00\",   //佣金金额\n                 \"Record_Status\": 2,   //状态\n                 \"yonjin_desrecord\": \"1获三级佣金\",\n                 \"rsbuyer_mobile\": \"139****2404\",   //购买者手机号\n                 \"Record_Sn\": \"20180913167\",   //订单编号\n                 \"status\": \"已完成\"   //状态\n             },\n         ],\n         \"from\": 1,\n         \"last_page\": 1,\n         \"next_page_url\": null,   //下一页\n         \"path\": \"http://localhost:6002/api/distribute/dis_record\",   //路径\n         \"per_page\": 20,   //每页数量\n         \"prev_page_url\": null,  //上一页\n         \"to\": 6,\n         \"total\": 6   //数据总数\n     },\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/distribute/dis_record",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/distribute/dis_record"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/RecordController.php",
+    "groupTitle": "佣金明细",
+    "name": "GetDistributeDis_record"
+  },
+  {
+    "type": "get",
+    "url": "/distribute/point_record",
+    "title": "爵位奖明细",
+    "group": "佣金明细",
+    "description": "<p>获取分销商爵位奖明细列表</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "cur_page",
+            "defaultValue": "1",
+            "description": "<p>当前页数</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>用户信息数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": {\n         \"current_page\": 1,   //当前页数\n         \"data\": [\n             {\n                 \"id\": 14,\n                 \"User_ID\": 1,   //用户ID\n                 \"type\": 4,\n                 \"orderid\": 0,\n                 \"money\": \"22.50\",   //金额\n                 \"status\": \"已完成\",   //状态\n                 \"descr\": \"高级经理--团队业绩发放\",   //佣金描述\n                 \"created_at\": \"2018/09/27 09:42:34\"   //获得时间\n             },\n         ],\n         \"from\": 1,\n         \"last_page\": 1,\n         \"next_page_url\": null,   //下一页\n         \"path\": \"http://localhost:6002/api/distribute/point_record\",   //路径\n         \"per_page\": 20,   //每页数量\n         \"prev_page_url\": null,  //上一页\n         \"to\": 6,\n         \"total\": 6   //数据总数\n     },\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/distribute/point_record",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/distribute/point_record"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/RecordController.php",
+    "groupTitle": "佣金明细",
+    "name": "GetDistributePoint_record"
+  },
+  {
+    "type": "get",
+    "url": "/distribute/push_record",
+    "title": "推荐奖明细",
+    "group": "佣金明细",
+    "description": "<p>获取分销商推荐奖明细列表</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "cur_page",
+            "defaultValue": "1",
+            "description": "<p>当前页数</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>用户信息数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": {\n         \"current_page\": 1,   //当前页数\n         \"data\": [\n             {\n                 \"id\": 14,\n                 \"User_ID\": 1,   //用户ID\n                 \"type\": 4,\n                 \"orderid\": 16,   //订单ID\n                 \"money\": \"22.50\",   //金额\n                 \"status\": \"已完成\",   //状态\n                 \"descr\": \"下级开通市级合伙人您获得佣金\",   //佣金描述\n                 \"created_at\": \"2018/09/27 09:42:34\"   //获得时间\n                 \"user_name\": \"grace\"   //得奖者名称\n             },\n         ],\n         \"from\": 1,\n         \"last_page\": 1,\n         \"next_page_url\": null,   //下一页\n         \"path\": \"http://localhost:6002/api/distribute/push_record\",   //路径\n         \"per_page\": 20,   //每页数量\n         \"prev_page_url\": null,  //上一页\n         \"to\": 6,\n         \"total\": 6   //数据总数\n     },\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/distribute/push_record",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/distribute/push_record"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/RecordController.php",
+    "groupTitle": "佣金明细",
+    "name": "GetDistributePush_record"
+  },
+  {
+    "type": "get",
+    "url": "/distribute/resale_record",
+    "title": "重消奖明细",
+    "group": "佣金明细",
+    "description": "<p>获取分销商重消奖明细列表</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "access-key",
+            "description": "<p>用户登陆认证token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "UserID",
+            "description": "<p>用户ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "cur_page",
+            "defaultValue": "1",
+            "description": "<p>当前页数</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>状态码（0:失败，1:成功, -1:需要重新登陆）</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>返回状态说明信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>用户信息数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n     \"status\": \"1\",\n     \"msg\": \"成功\",\n     \"data\": {\n         \"current_page\": 1,   //当前页数\n         \"data\": [\n             {\n                 \"id\": 14,\n                 \"User_ID\": 1,   //用户ID\n                 \"type\": 4,\n                 \"orderid\": 65,  //订单ID\n                 \"money\": \"22.50\",   //金额\n                 \"status\": \"已完成\",   //状态\n                 \"descr\": \"下级有会员充值积分,您获取重消奖\",   //佣金描述\n                 \"created_at\": \"2018/09/27 09:42:34\"   //获得时间\n                 \"user_name\": \"grace\"   //得奖者名称\n             },\n         ],\n         \"from\": 1,\n         \"last_page\": 1,\n         \"next_page_url\": null,   //下一页\n         \"path\": \"http://localhost:6002/api/distribute/resale_record\",   //路径\n         \"per_page\": 20,   //每页数量\n         \"prev_page_url\": null,  //上一页\n         \"to\": 6,\n         \"total\": 6   //数据总数\n     },\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -i http://localhost:6002/api/distribute/resale_record",
+        "type": "curl"
+      }
+    ],
+    "sampleRequest": [
+      {
+        "url": "/api/distribute/resale_record"
+      }
+    ],
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "{\n     \"status\": \"0\",\n     \"msg\": \"失败\",\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/Http/Controllers/Api/RecordController.php",
+    "groupTitle": "佣金明细",
+    "name": "GetDistributeResale_record"
+  },
+  {
+    "type": "get",
     "url": "/distribute/account_info",
     "title": "分销商账户信息",
     "group": "分销中心",

@@ -99,6 +99,12 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api'], function ($route){
         $api->post('/send_mess', 'UserMessageController@send_mess');
         $api->get('/mess_list', 'UserMessageController@mess_list');
         $api->post('/read_mess', 'UserMessageController@read_mess');
+        //明细列表
+        $api->get('dis_record', 'RecordController@dis_record');  //分销奖
+        $api->get('point_record', 'RecordController@point_record');  //爵位奖
+        $api->get('agent_record', 'RecordController@agent_record');  //区域代理奖
+        $api->get('push_record', 'RecordController@push_record');  //区域代理奖
+        $api->get('resale_record', 'RecordController@resale_record');  //重消奖
     });
 
     $route->get('/center/integral_rate', 'IntegralController@get_integral_rate');  //积分充值比例

@@ -25,10 +25,12 @@ class Dis_Account_Record extends Model
         'skukey','yformat'
     ];
 
+    protected  $hidden = ['Users_ID'];
+
     //一个佣金获得记录属于一个分销记录
     public function DisRecord()
     {
-        return $this->belongsTo(Dis_Record::class, 'Ds_Record_ID');
+        return $this->belongsTo(Dis_Record::class, 'Ds_Record_ID', 'Record_ID');
     }
 
     /*一条佣金分销记录属于一个用户*/
